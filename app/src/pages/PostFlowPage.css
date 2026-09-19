@@ -1,0 +1,118 @@
+.post-flow__preview {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+.post-flow__target {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.post-flow__picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.post-flow__picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  background: var(--surface);
+  border: 1px solid var(--ribbon-snow);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.post-flow__picker--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.post-flow__picker input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.post-flow__picker:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.post-flow__comment-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--ribbon-snow);
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  margin-top: 12px;
+}
+
+.post-flow__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.post-flow__button {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.post-flow__button--secondary {
+  background: transparent;
+  border: 1px solid var(--ribbon-snow);
+  color: var(--text);
+}
+
+.post-flow__button--primary {
+  background: var(--accent);
+  border: none;
+  color: var(--on-accent);
+}
+
+.post-flow__button--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.post-flow__error {
+  color: var(--status-warn-text);
+}
+
+.post-flow__done {
+  text-align: center;
+}
+
+.post-flow__done-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.post-flow__done-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}

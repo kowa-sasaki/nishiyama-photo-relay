@@ -1,0 +1,82 @@
+[
+  {
+    "title": "【日別】令和７年度　西山公園東側来訪者数（人流データ）",
+    "package_name": "18207_nishiyamakoenhigashigawanraihosyasu",
+    "source_url": "https://ckan.odp.jig.jp/dataset/5bb6a5ed-2529-4fb6-88e9-ff78c1badcd1",
+    "format": "CSV",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "used": true
+  },
+  {
+    "title": "【都道府県別割合】令和７年度　西山公園入場者（人流データ）",
+    "package_name": "18207_nishiyamakoentodohukenbetsuwariai",
+    "source_url": "https://ckan.odp.jig.jp/dataset/d86c43f4-dca3-4e93-ae64-6cab60bd61b8",
+    "format": "CSV",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "known_issue": "mislabeled_resource_parking_data_not_prefecture_ratio",
+    "used": false
+  },
+  {
+    "title": "【市区町村別割合】令和７年度　西山公園入場者（人流データ）",
+    "package_name": "18207_nishiyamakoenshikutyosonbetsuwariai",
+    "source_url": "https://ckan.odp.jig.jp/dataset/4ab39dd1-d25b-4948-b3c3-967b9eaea480",
+    "format": "CSV",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "used": true
+  },
+  {
+    "title": "西山公園のツツジ種類・株数",
+    "package_name": "18207_nishiyamatsutsuji",
+    "source_url": "https://ckan.odp.jig.jp/dataset/a78580f3-b6c9-4495-8734-ef7c2dfbbbfe",
+    "format": "XLS",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "used": true
+  },
+  {
+    "title": "西山公園入場者数(月別)",
+    "package_name": "18207_nishiyamakoennyujoshasu",
+    "source_url": "https://ckan.odp.jig.jp/dataset/64081a92-440b-41f4-bc64-043996228588",
+    "format": "XLS",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "used": true
+  },
+  {
+    "title": "西山公園ツツジ画像",
+    "package_name": "18207_nishiyamakoentsutsuzipicture",
+    "source_url": "https://ckan.odp.jig.jp/dataset/5485cc00-e0ff-4d75-b620-9402ed08a823",
+    "format": "JPEG",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "used": true,
+    "image_count": 7
+  },
+  {
+    "title": "西山公園の紅葉画像",
+    "package_name": "18207_nishiyamakoenkoyopicture",
+    "source_url": "https://ckan.odp.jig.jp/dataset/02c6e2d3-91b7-409e-b2af-0883d90cd842",
+    "format": "JPEG",
+    "license": "CC-BY-2.1",
+    "license_title": "クリエイティブ・コモンズ 表示 2.1",
+    "license_url": "https://creativecommons.org/licenses/by/2.1/jp/",
+    "organization": "福井県鯖江市",
+    "used": true,
+    "image_count": 7
+  }
+]

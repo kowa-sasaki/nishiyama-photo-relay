@@ -1,0 +1,39 @@
+.map-trace-page {
+  padding: 16px;
+}
+
+.map-trace-page__title {
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+
+.map-trace-page__note {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.map-trace-page__columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .map-trace-page__columns {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.map-trace-page__column h2 {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.map-trace-page__reference {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}

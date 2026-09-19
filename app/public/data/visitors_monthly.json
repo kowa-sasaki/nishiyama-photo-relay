@@ -1,0 +1,84 @@
+{
+  "source": "西山公園入場者数(月別)",
+  "fiscal_year_current": "令和7年度",
+  "fiscal_year_previous": "令和6年度",
+  "unit": "人",
+  "months": [
+    {
+      "month": 4,
+      "label": "4月",
+      "visitors": 156040,
+      "visitors_prev_year": 137395
+    },
+    {
+      "month": 5,
+      "label": "5月",
+      "visitors": 221430,
+      "visitors_prev_year": 205175
+    },
+    {
+      "month": 6,
+      "label": "6月",
+      "visitors": 27384,
+      "visitors_prev_year": 27819
+    },
+    {
+      "month": 7,
+      "label": "7月",
+      "visitors": 18312,
+      "visitors_prev_year": 18543
+    },
+    {
+      "month": 8,
+      "label": "8月",
+      "visitors": 38829,
+      "visitors_prev_year": 33276
+    },
+    {
+      "month": 9,
+      "label": "9月",
+      "visitors": 70610,
+      "visitors_prev_year": 59720
+    },
+    {
+      "month": 10,
+      "label": "10月",
+      "visitors": 73955,
+      "visitors_prev_year": 84210
+    },
+    {
+      "month": 11,
+      "label": "11月",
+      "visitors": 132185,
+      "visitors_prev_year": 96500
+    },
+    {
+      "month": 12,
+      "label": "12月",
+      "visitors": 29178,
+      "visitors_prev_year": 16011
+    },
+    {
+      "month": 1,
+      "label": "1月",
+      "visitors": 19770,
+      "visitors_prev_year": 32523
+    },
+    {
+      "month": 2,
+      "label": "2月",
+      "visitors": 33639,
+      "visitors_prev_year": 16593
+    },
+    {
+      "month": 3,
+      "label": "3月",
+      "visitors": 63477,
+      "visitors_prev_year": 46992
+    }
+  ],
+  "total": {
+    "visitors": 884809,
+    "visitors_prev_year": 774757
+  }
+}

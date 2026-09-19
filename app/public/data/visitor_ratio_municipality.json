@@ -1,0 +1,90 @@
+{
+  "source": "【市区町村別割合】令和7年度 西山公園入場者（人流データ）",
+  "period_start": "2025-04-01",
+  "period_end": "2026-03-31",
+  "area": "西山公園",
+  "holiday": [
+    {
+      "rank": 1,
+      "municipality": "福井県鯖江市",
+      "ratio_percent": 52
+    },
+    {
+      "rank": 2,
+      "municipality": "福井県越前市",
+      "ratio_percent": 19
+    },
+    {
+      "rank": 3,
+      "municipality": "福井県福井市",
+      "ratio_percent": 18
+    },
+    {
+      "rank": 4,
+      "municipality": "福井県丹生郡越前町",
+      "ratio_percent": 5
+    },
+    {
+      "rank": 5,
+      "municipality": "福井県坂井市",
+      "ratio_percent": 4
+    },
+    {
+      "rank": 6,
+      "municipality": "福井県南条郡南越前町",
+      "ratio_percent": 1
+    },
+    {
+      "rank": 7,
+      "municipality": "福井県吉田郡永平寺町",
+      "ratio_percent": 1
+    },
+    {
+      "rank": 8,
+      "municipality": "福井県今立郡池田町",
+      "ratio_percent": 0
+    }
+  ],
+  "weekday": [
+    {
+      "rank": 1,
+      "municipality": "福井県鯖江市",
+      "ratio_percent": 62
+    },
+    {
+      "rank": 2,
+      "municipality": "福井県越前市",
+      "ratio_percent": 17
+    },
+    {
+      "rank": 3,
+      "municipality": "福井県福井市",
+      "ratio_percent": 14
+    },
+    {
+      "rank": 4,
+      "municipality": "福井県丹生郡越前町",
+      "ratio_percent": 5
+    },
+    {
+      "rank": 5,
+      "municipality": "福井県坂井市",
+      "ratio_percent": 1
+    },
+    {
+      "rank": 6,
+      "municipality": "福井県南条郡南越前町",
+      "ratio_percent": 1
+    },
+    {
+      "rank": 7,
+      "municipality": "福井県今立郡池田町",
+      "ratio_percent": 0
+    },
+    {
+      "rank": 8,
+      "municipality": "福井県吉田郡永平寺町",
+      "ratio_percent": 0
+    }
+  ]
+}

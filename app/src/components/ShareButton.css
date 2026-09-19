@@ -1,0 +1,33 @@
+.share-button {
+  position: relative;
+  display: inline-flex;
+}
+
+.share-button__button {
+  min-height: 44px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--ribbon-snow);
+  color: var(--text);
+}
+
+/* absolute配置でトースト的に浮き出させ、共有ボタンの高さ変化が
+   隣接要素(投稿するボタン等)の位置をずらさないようにする */
+.share-button__copied {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 8px 0 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}

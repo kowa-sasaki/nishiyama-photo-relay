@@ -1,0 +1,107 @@
+.spots-list__new-button {
+  display: block;
+  min-height: 44px;
+  line-height: 44px;
+  text-align: center;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.spots-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.spots-list__card {
+  display: block;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.spots-list__row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.spots-list__thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.spots-list__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.spots-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.spots-list__name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+
+.spots-list__stats {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.spots-list__theme {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+.spots-list__sort {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.spots-list__sort-button {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--ribbon-snow);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.spots-list__sort-button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.spots-list__geo-status {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  margin: 0 0 12px;
+}
+
+.spots-list__geo-status--error {
+  color: var(--status-warn-text);
+}

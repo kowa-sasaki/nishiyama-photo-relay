@@ -1,0 +1,51 @@
+.spot-ranking {
+  margin: 16px 0;
+}
+
+.spot-ranking__heading {
+  font-size: 0.9375rem;
+  margin: 0 0 8px;
+}
+
+.spot-ranking__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.spot-ranking__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.spot-ranking__rank {
+  font-weight: 700;
+  color: var(--accent);
+  width: 1.25em;
+  flex-shrink: 0;
+}
+
+.spot-ranking__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spot-ranking__count {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}

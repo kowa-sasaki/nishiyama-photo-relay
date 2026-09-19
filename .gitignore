@@ -1,0 +1,28 @@
+# Node / Vite
+node_modules/
+dist/
+.vite/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# tools: 生データの一時置き場（ビルド時に app/public/data/*.json へ変換してコミットする）
+tools/raw/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+!.vscode/extensions.json
+
+# トレース用の一時参照画像（Google Mapsスクショ等、著作権上コミット不可）
+app/src/assets/Screenshot*.png

@@ -1,0 +1,90 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.182041,
+          35.95
+        ]
+      },
+      "properties": {
+        "name": "大噴水前",
+        "theme": null,
+        "description": "西山公園のシンボル。桜の季節は夜桜と噴水の組み合わせが名物で、ライトアップにより夜の表情も変わる。",
+        "kind": "official",
+        "order": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.1815,
+          35.9503
+        ]
+      },
+      "properties": {
+        "name": "つつじ園（結びの広場）",
+        "theme": null,
+        "description": "約5万株のツツジが咲く西山公園の春の主役。5月につつじまつりが開催される。",
+        "kind": "official",
+        "order": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.184471,
+          35.95111
+        ]
+      },
+      "properties": {
+        "name": "上段の庭（もみじ）",
+        "theme": null,
+        "description": "和風庭園。秋の紅葉の名所で、11月にもみじまつりが開催される。",
+        "kind": "official",
+        "order": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.181033,
+          35.952414
+        ]
+      },
+      "properties": {
+        "name": "愛の鐘・展望台",
+        "theme": null,
+        "description": "西山山頂の展望広場。鯖江市街を一望でき、雪景色や夕景の変化を捉えやすい。",
+        "kind": "official",
+        "order": 4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.180694,
+          35.948694
+        ]
+      },
+      "properties": {
+        "name": "西山動物園前（道の駅側）",
+        "theme": null,
+        "description": "レッサーパンダで知られる西山動物園の入口。道の駅西山公園に近い東側の入口で、人流データ「東側来訪者数」の計測範囲と地理的に対応づけられる。",
+        "kind": "official",
+        "order": 5
+      }
+    }
+  ]
+}

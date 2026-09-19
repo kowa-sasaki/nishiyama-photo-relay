@@ -1,0 +1,142 @@
+.new-spot__preview {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+.new-spot__picker-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.new-spot__picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  background: var(--surface);
+  border: 1px solid var(--ribbon-snow);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.new-spot__picker--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.new-spot__picker input[type='file'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.new-spot__picker:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.new-spot__field {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.new-spot__text-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--ribbon-snow);
+  border-radius: 8px;
+  padding: 10px;
+  font: inherit;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+.new-spot__summary {
+  margin: 12px 0 0;
+}
+
+.new-spot__summary-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--ribbon-snow);
+}
+
+.new-spot__summary-row dt {
+  flex: 0 0 auto;
+  width: 4.5em;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.new-spot__summary-row dd {
+  flex: 1;
+  margin: 0;
+  word-break: break-word;
+}
+
+.new-spot__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.new-spot__button {
+  flex: 1;
+  min-height: 44px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.new-spot__button--secondary {
+  background: transparent;
+  border: 1px solid var(--ribbon-snow);
+  color: var(--text);
+}
+
+.new-spot__button--primary {
+  background: var(--accent);
+  border: none;
+  color: var(--on-accent);
+}
+
+.new-spot__button--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.new-spot__error {
+  color: var(--status-warn-text);
+}
+
+.new-spot__done {
+  text-align: center;
+}
+
+.new-spot__done-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.new-spot__done-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}

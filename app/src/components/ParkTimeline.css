@@ -1,0 +1,261 @@
+.park-timeline {
+  margin: 16px 0;
+}
+
+.park-timeline__heading {
+  font-size: 0.9375rem;
+  margin: 0 0 8px;
+}
+
+.park-timeline__card {
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 14px 0 10px;
+}
+
+.park-timeline__head {
+  padding: 0 14px 10px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.park-timeline__head p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.park-timeline__head-actions {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.park-timeline__reset {
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.park-timeline__scroll {
+  overflow-x: auto;
+  padding: 4px 14px 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.park-timeline__track {
+  position: relative;
+}
+
+.park-timeline__ribbon-row {
+  display: flex;
+  gap: 2px;
+}
+
+.park-timeline__day-cell {
+  border-radius: 3px;
+  flex: none;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+
+.park-timeline__day-cell--has-data {
+  outline: 1px solid color-mix(in srgb, var(--text) 35%, transparent);
+  outline-offset: -1px;
+  cursor: pointer;
+}
+
+.park-timeline__day-cell--has-data::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  background: transparent;
+}
+
+.park-timeline__day-cell--has-data::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--on-photo);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+.park-timeline__day-cell--today {
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+.park-timeline__day-cell--selected {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.park-timeline__visitors-row {
+  display: block;
+  margin-top: 6px;
+  overflow: visible;
+}
+
+.park-timeline__visitors-fill-top {
+  stop-color: var(--accent);
+  stop-opacity: 0.18;
+}
+
+.park-timeline__visitors-fill-bottom {
+  stop-color: var(--accent);
+  stop-opacity: 0.02;
+}
+
+.park-timeline__visitors-cap-line {
+  stroke: var(--text-muted);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  opacity: 0.5;
+}
+
+.park-timeline__visitors-area {
+  fill: url(#park-timeline-visitors-fill);
+  stroke: none;
+}
+
+.park-timeline__visitors-daily {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  opacity: 0.35;
+  stroke-linejoin: round;
+}
+
+.park-timeline__visitors-trend {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.park-timeline__visitors-overflow {
+  fill: var(--accent);
+}
+
+.park-timeline__today-line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  opacity: 0.6;
+}
+
+.park-timeline__posts-row {
+  margin-top: 4px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.park-timeline__post-bar-col {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.park-timeline__post-bar {
+  width: 100%;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+}
+
+.park-timeline__post-baseline {
+  width: 100%;
+  height: 1px;
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+}
+
+.park-timeline__month-ticks {
+  position: relative;
+  height: 14px;
+  margin-top: 4px;
+}
+
+.park-timeline__month-tick {
+  position: absolute;
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.park-timeline__tooltip {
+  margin: 8px 14px 0;
+  display: flex;
+  gap: 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.park-timeline__tooltip-date {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.park-timeline__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 10px 14px 2px;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+.park-timeline__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.park-timeline__legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.park-timeline__legend-dot--placeholder {
+  background: var(--ribbon-shinryoku);
+  opacity: 0.4;
+}
+
+.park-timeline__legend-dot--data {
+  background: var(--ribbon-koyo);
+  outline: 1px solid var(--text-muted);
+}
+
+.park-timeline__legend-arrow {
+  color: var(--accent);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.park-timeline__legend-cap-line {
+  display: inline-block;
+  width: 12px;
+  height: 0;
+  border-top: 1px dashed var(--text-muted);
+  opacity: 0.5;
+}

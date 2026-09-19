@@ -1,0 +1,90 @@
+.tag-input__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag-input__chip {
+  border-radius: 999px;
+  border: 1px solid var(--ribbon-snow);
+  background: transparent;
+  color: var(--text);
+  padding: 6px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tag-input__chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.tag-input__draft-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tag-input__draft-label {
+  display: block;
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.tag-input__draft-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--ribbon-snow);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  margin-top: 4px;
+}
+
+.tag-input__add-button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--ribbon-snow);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tag-input__selected {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+
+.tag-input__selected-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.875rem;
+}
+
+.tag-input__selected-chip button {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 0;
+}
