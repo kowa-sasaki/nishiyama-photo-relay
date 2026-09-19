@@ -50,15 +50,17 @@ describe('SharePage', () => {
     expect(screen.getByText('出典情報を取得できませんでした: network error')).toBeInTheDocument()
   })
 
-  it('explains how to use the app in three steps', () => {
+  it('explains how to use the app in four steps, ending with how to read the home screen', () => {
     vi.spyOn(creditsModule, 'useCredits').mockReturnValue({ status: 'loading' })
     render(<SharePage />)
     expect(screen.getByRole('heading', { name: '使い方' })).toBeInTheDocument()
     const steps = within(screen.getByRole('list', { name: '使い方' })).getAllByRole('listitem')
-    expect(steps).toHaveLength(3)
+    expect(steps).toHaveLength(4)
     expect(steps[0]).toHaveTextContent('定点')
     expect(steps[1]).toHaveTextContent('投稿')
     expect(steps[2]).toHaveTextContent('みんなの定点')
+    expect(steps[3]).toHaveTextContent('ホーム')
+    expect(steps[3]).toHaveTextContent('色のリボン')
   })
 
   it('shares the app itself with the hashtag', async () => {

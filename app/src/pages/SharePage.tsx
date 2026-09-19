@@ -13,22 +13,26 @@ export function SharePage() {
       </h1>
       <p className="share-page__concept">西山公園の&quot;今日&quot;を、みんなで1年分の絵にする。</p>
       <p className="share-page__description">
-        園内のお気に入りの場所で写真を撮って投稿するだけ。同じ場所の写真が季節をまたいでつながり、つつじのピンクから紅葉の赤まで、西山公園の1年が1本のタイムラインになります。
+        西山公園でお気に入りの場所を決めて、写真を撮るだけ。春のつつじのピンクから秋の紅葉の赤まで、同じ場所の写真が季節をこえてつながっていきます。あなたの1枚が、次の誰かへのバトンになります。
       </p>
 
       <h2 id="howto-heading" className="share-page__section-heading">使い方</h2>
       <ol className="share-page__howto" aria-labelledby="howto-heading">
         <li>
           <span className="share-page__howto-step" aria-hidden="true">1</span>
-          「定点」タブで公園内の定点を選びます。現在地から近い順にも並べ替えられます。
+          まずは「定点」タブで、撮ってみたい場所を選びましょう。「近い順」にすると、いま居る場所の近くから探せます。
         </li>
         <li>
           <span className="share-page__howto-step" aria-hidden="true">2</span>
-          「＋投稿」から写真を撮って、タグとひとことを添えて送ります。ログインは不要です。
+          「＋投稿」で写真を撮って、タグとひとことを添えて送信。ログインも登録もいりません。
         </li>
         <li>
           <span className="share-page__howto-step" aria-hidden="true">3</span>
-          お気に入りの場所が無ければ、お題を付けて「みんなの定点」を作れます。あなたの1枚目が、次の誰かにつながります。
+          ぴったりの場所が見つからなければ、お題を付けて「みんなの定点」を作ってみてください。あなたの1枚目が、新しい定点のスタートになります。
+        </li>
+        <li>
+          <span className="share-page__howto-step" aria-hidden="true">4</span>
+          ホームでは、みんなの写真の平均色を並べた「色のリボン」と来場者数のグラフで、公園の1年を眺められます。日付をタップすると、その日の写真が見られます。
         </li>
       </ol>
 
