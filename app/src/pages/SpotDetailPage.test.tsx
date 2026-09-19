@@ -132,6 +132,32 @@ describe('SpotDetailPage', () => {
     expect(screen.getByText('西口の並木道沿い')).toBeInTheDocument()
   })
 
+  it('links to the spot location in a map app in a new tab', () => {
+    vi.spyOn(useSpotModule, 'useSpot').mockReturnValue({
+      status: 'loaded',
+      spot: {
+        id: 'spot-1',
+        name: '大噴水前',
+        theme: null,
+        lat: 35.9449,
+        lng: 136.1889,
+        description: null,
+        kind: 'official',
+        order: 1,
+        created_at: '2026-06-01T00:00:00Z',
+      },
+      posts: [],
+    })
+    renderAtSpot('spot-1')
+    const link = screen.getByRole('link', { name: '地図アプリで開く' })
+    expect(link).toHaveAttribute(
+      'href',
+      'https://www.google.com/maps/search/?api=1&query=35.9449,136.1889',
+    )
+    expect(link).toHaveAttribute('target', '_blank')
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  })
+
   it('shows an error message when loading fails', () => {
     vi.spyOn(useSpotModule, 'useSpot').mockReturnValue({ status: 'error', message: 'not found' })
     renderAtSpot('spot-1')

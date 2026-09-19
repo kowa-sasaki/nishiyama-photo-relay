@@ -16,6 +16,18 @@
   margin: 0 0 16px;
 }
 
+.spot-detail__map-link {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 8px;
+  color: var(--accent);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .spot-detail__actions {
   display: flex;
   align-items: center;

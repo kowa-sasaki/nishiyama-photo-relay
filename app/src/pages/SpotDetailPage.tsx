@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useLastViewedSpot } from '../lib/LastViewedSpotContext'
 import { getSupabaseClientSafe } from '../lib/supabaseClient'
 import { getPostImageUrl } from '../lib/postImage'
+import { buildMapUrl } from '../lib/mapLink'
 import { ShareButton } from '../components/ShareButton'
 import { ReportButton } from '../components/ReportButton'
 import { SpotHeroSlideshow } from '../components/SpotHeroSlideshow'
@@ -60,6 +61,14 @@ export function SpotDetailPage() {
           {state.spot.description && (
             <p className="spot-detail__description">{state.spot.description}</p>
           )}
+          <a
+            href={buildMapUrl(state.spot.lat, state.spot.lng)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="spot-detail__map-link"
+          >
+            地図アプリで開く
+          </a>
           <div className="spot-detail__actions">
             <Link to="/post" className="spot-detail__post-button">
               投稿する
