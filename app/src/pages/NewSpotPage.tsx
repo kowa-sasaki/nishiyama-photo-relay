@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { getSupabaseClientSafe } from '../lib/supabaseClient'
 import { resizeAndAnalyzeImage } from '../lib/image'
-import { useGeolocation } from '../lib/useGeolocation'
 import { TagInput } from '../components/TagInput'
 import { ShareButton } from '../components/ShareButton'
 import { createUserSpot } from '../lib/createUserSpot'
+import { useParkAccess } from '../lib/useParkAccess'
+import { ParkAccessNotice, DemoBanner } from '../components/ParkAccessNotice'
 import { SHARE_HASHTAG } from '../lib/shareText'
 import './NewSpotPage.css'
 
@@ -19,7 +20,8 @@ const DESCRIPTION_MAX = 200
 export function NewSpotPage() {
   const { client, envError } = getSupabaseClientSafe()
   const auth = useAuth()
-  const { state: geoState, retry: retryGeolocation } = useGeolocation()
+  const { access, retry: retryAccess } = useParkAccess()
+  const [demo, setDemo] = useState(false)
 
   const [step, setStep] = useState<Step>('select')
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -62,11 +64,15 @@ export function NewSpotPage() {
   }
 
   async function handleSubmit() {
+    if (demo) {
+      setStep('done')
+      return
+    }
     if (
       !pendingBlob ||
       !avgColor ||
       auth.status !== 'signed-in' ||
-      geoState.status !== 'success' ||
+      access.status !== 'inside' ||
       !canProceedToConfirm
     ) {
       return
@@ -78,8 +84,8 @@ export function NewSpotPage() {
         name: trimmedName,
         theme: trimmedTheme,
         description: trimmedDescription,
-        lat: geoState.lat,
-        lng: geoState.lng,
+        lat: access.lat,
+        lng: access.lng,
         blob: pendingBlob,
         avgColor,
         tags,
@@ -103,9 +109,19 @@ export function NewSpotPage() {
     )
   }
 
+  if (!demo && access.status !== 'inside') {
+    return (
+      <section aria-labelledby="new-spot-heading">
+        <h1 id="new-spot-heading">新しい定点をつくる</h1>
+        <ParkAccessNotice access={access} onRetry={retryAccess} onStartDemo={() => setDemo(true)} />
+      </section>
+    )
+  }
+
   return (
     <section aria-labelledby="new-spot-heading">
       <h1 id="new-spot-heading">新しい定点をつくる</h1>
+      {demo && <DemoBanner />}
 
       {step === 'select' && (
         <div>
@@ -224,23 +240,8 @@ export function NewSpotPage() {
               </div>
             )}
           </dl>
-          {geoState.status === 'loading' && <p>位置情報を取得中…</p>}
-          {geoState.status === 'error' && (
-            <div>
-              <p className="new-spot__error">
-                位置情報を取得できませんでした。設定を確認して再試行してください
-              </p>
-              <button
-                type="button"
-                className="new-spot__button new-spot__button--secondary"
-                onClick={retryGeolocation}
-              >
-                再試行
-              </button>
-            </div>
-          )}
-          {auth.status === 'loading' && <p>認証準備中…</p>}
-          {auth.status === 'error' && <p className="new-spot__error">認証に失敗しました: {auth.message}</p>}
+          {!demo && auth.status === 'loading' && <p>認証準備中…</p>}
+          {!demo && auth.status === 'error' && <p className="new-spot__error">認証に失敗しました: {auth.message}</p>}
           {submitError && <p className="new-spot__error">送信に失敗しました: {submitError}</p>}
           <div className="new-spot__actions">
             <button
@@ -254,10 +255,22 @@ export function NewSpotPage() {
               type="button"
               className="new-spot__button new-spot__button--primary"
               onClick={() => void handleSubmit()}
-              disabled={submitting || auth.status !== 'signed-in' || geoState.status !== 'success'}
+              disabled={submitting || (!demo && auth.status !== 'signed-in')}
             >
               送信する
             </button>
+          </div>
+        </div>
+      )}
+
+      {step === 'done' && demo && (
+        <div className="new-spot__done">
+          <p className="new-spot__done-title">デモ投稿が完了しました</p>
+          <p>デモのため保存されていません。</p>
+          <div className="new-spot__done-actions">
+            <Link to="/spots" className="new-spot__button new-spot__button--secondary">
+              定点一覧へ
+            </Link>
           </div>
         </div>
       )}

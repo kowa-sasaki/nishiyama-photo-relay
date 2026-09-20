@@ -34,7 +34,7 @@ beforeEach(() => {
     avgColor: '#8fbf6a',
   })
   vi.spyOn(geolocationModule, 'useGeolocation').mockReturnValue({
-    state: { status: 'success', lat: 35.9, lng: 136.2 },
+    state: { status: 'success', lat: 35.9503, lng: 136.1815 },
     retry: vi.fn(),
   })
 })
@@ -100,8 +100,8 @@ describe('NewSpotPage', () => {
         name: '北口ベンチ',
         theme: 'ランニング途中によってみた',
         description: '',
-        lat: 35.9,
-        lng: 136.2,
+        lat: 35.9503,
+        lng: 136.1815,
         tags: ['新緑'],
         comment: 'いい眺めでした',
         avgColor: '#8fbf6a',
@@ -121,42 +121,6 @@ describe('NewSpotPage', () => {
     })
   })
 
-  it('disables the submit button and shows a retry link while geolocation has failed', async () => {
-    vi.spyOn(geolocationModule, 'useGeolocation').mockReturnValue({
-      state: { status: 'error', message: '位置情報の利用が許可されていません' },
-      retry: vi.fn(),
-    })
-    const user = userEvent.setup()
-    renderNewSpotPage()
-    await fillPhotoAndReachCompose(user)
-    await user.type(screen.getByLabelText('定点名'), '北口ベンチ')
-    await user.type(screen.getByLabelText('お題'), 'ランニング途中によってみた')
-    await user.click(screen.getByRole('button', { name: '次へ' }))
-
-    expect(
-      screen.getByText('位置情報を取得できませんでした。設定を確認して再試行してください'),
-    ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '送信する' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: '再試行' })).toBeInTheDocument()
-  })
-
-  it('calls retry() when the retry button is clicked', async () => {
-    const retry = vi.fn()
-    vi.spyOn(geolocationModule, 'useGeolocation').mockReturnValue({
-      state: { status: 'error', message: 'timeout' },
-      retry,
-    })
-    const user = userEvent.setup()
-    renderNewSpotPage()
-    await fillPhotoAndReachCompose(user)
-    await user.type(screen.getByLabelText('定点名'), '北口ベンチ')
-    await user.type(screen.getByLabelText('お題'), 'ランニング途中によってみた')
-    await user.click(screen.getByRole('button', { name: '次へ' }))
-
-    await user.click(screen.getByRole('button', { name: '再試行' }))
-    expect(retry).toHaveBeenCalledTimes(1)
-  })
-
   it('shows a friendly message instead of crashing when env vars are missing', () => {
     vi.mocked(getSupabaseClientSafe).mockReturnValue({
       client: {} as ReturnType<typeof getSupabaseClientSafe>['client'],
@@ -166,5 +130,74 @@ describe('NewSpotPage', () => {
     expect(
       screen.getByText('VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY が設定されていません'),
     ).toBeInTheDocument()
+  })
+})
+
+describe('NewSpotPage park gate', () => {
+  function mockLocation(state: geolocationModule.GeolocationState, retry = vi.fn()) {
+    vi.spyOn(geolocationModule, 'useGeolocation').mockReturnValue({ state, retry })
+    return retry
+  }
+
+  it('shows a checking status and no file pickers while the location is being checked', () => {
+    mockLocation({ status: 'loading' })
+    renderNewSpotPage()
+    expect(screen.getByRole('heading', { name: '新しい定点をつくる' })).toBeInTheDocument()
+    expect(screen.getByText('現在地を確認中…')).toBeInTheDocument()
+    expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
+  })
+
+  it('blocks creating a spot outside the park and offers the demo', () => {
+    mockLocation({ status: 'success', lat: 35.9, lng: 136.2 })
+    renderNewSpotPage()
+    expect(screen.getByText('投稿は西山公園の中でできます。公園内で開き直してください。')).toBeInTheDocument()
+    expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'デモ投稿を試す' })).toBeInTheDocument()
+  })
+
+  it('blocks creating a spot when location is unavailable and retries on request', async () => {
+    const user = userEvent.setup()
+    const retry = mockLocation({ status: 'error', message: 'denied' })
+    renderNewSpotPage()
+    expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '位置情報を許可して再試行' }))
+    expect(retry).toHaveBeenCalledTimes(1)
+  })
+
+  it('runs the whole flow in demo mode without saving anything', async () => {
+    const user = userEvent.setup()
+    // Spies are not restored between tests, so drop calls recorded by earlier tests.
+    const createUserSpotSpy = vi.spyOn(createUserSpotModule, 'createUserSpot').mockClear()
+    mockLocation({ status: 'success', lat: 35.9, lng: 136.2 })
+    renderNewSpotPage()
+
+    await user.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+    expect(screen.getByText('デモ：保存されません')).toBeInTheDocument()
+
+    await fillPhotoAndReachCompose(user)
+    await user.type(screen.getByLabelText('定点名'), '北口ベンチ')
+    await user.type(screen.getByLabelText('お題'), 'ランニング途中によってみた')
+    await user.click(screen.getByRole('button', { name: '次へ' }))
+    await user.click(screen.getByRole('button', { name: '送信する' }))
+
+    expect(await screen.findByText('デモ投稿が完了しました')).toBeInTheDocument()
+    expect(screen.getByText('デモのため保存されていません。')).toBeInTheDocument()
+    expect(createUserSpotSpy).not.toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: '共有する' })).not.toBeInTheDocument()
+  })
+
+  it('lets demo mode submit even when anonymous auth is not ready', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(authModule, 'useAuth').mockReturnValue({ status: 'loading' })
+    mockLocation({ status: 'error', message: 'denied' })
+    renderNewSpotPage()
+
+    await user.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+    await fillPhotoAndReachCompose(user)
+    await user.type(screen.getByLabelText('定点名'), '北口ベンチ')
+    await user.type(screen.getByLabelText('お題'), 'ランニング途中によってみた')
+    await user.click(screen.getByRole('button', { name: '次へ' }))
+    expect(screen.getByRole('button', { name: '送信する' })).toBeEnabled()
+    expect(screen.queryByText('認証準備中…')).not.toBeInTheDocument()
   })
 })
