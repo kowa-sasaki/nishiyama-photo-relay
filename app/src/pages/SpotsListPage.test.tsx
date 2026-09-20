@@ -701,23 +701,45 @@ describe('SpotsListPage tabs', () => {
     })
     vi.spyOn(useAllPostsModule, 'useAllPosts').mockReturnValue({
       status: 'loaded',
-      posts: ['2026-08-01T00:00:00Z', '2026-08-10T00:00:00Z'].map((created_at, index) => ({
+      posts: [
+        // つながる公式: 直近30日に2件、間隔が14日以内で連鎖(18日目)
+        { spotId: 'spot-chain', name: 'つながる公式', createdAt: '2026-08-01T00:00:00Z' },
+        { spotId: 'spot-chain', name: 'つながる公式', createdAt: '2026-08-10T00:00:00Z' },
+        // 静かな公式: 直近30日に3件(人気では先頭)だが、最新の投稿の前に14日超の空白があり連鎖しない
+        { spotId: 'spot-quiet', name: '静かな公式', createdAt: '2026-07-21T00:00:00Z' },
+        { spotId: 'spot-quiet', name: '静かな公式', createdAt: '2026-07-22T00:00:00Z' },
+        { spotId: 'spot-quiet', name: '静かな公式', createdAt: '2026-08-10T00:00:00Z' },
+      ].map(({ spotId, name, createdAt }, index) => ({
         id: `p${index}`,
-        spot_id: 'spot-chain',
+        spot_id: spotId,
         image_path: `${index}.jpg`,
         comment: null,
         tags: [],
         avg_color: '#000000',
-        created_at,
+        created_at: createdAt,
         device_id: 'd1',
-        spots: { name: 'つながる公式' },
+        spots: { name },
       })),
     })
     renderListAt('/spots')
+    const popularityCards = within(screen.getByRole('list')).getAllByRole('link')
+    expect(popularityCards.map((el) => el.textContent)[0]).toContain('静かな公式')
+
     await user.click(screen.getByRole('button', { name: '継続中' }))
     const cards = within(screen.getByRole('list')).getAllByRole('link')
     expect(cards.map((el) => el.textContent)[0]).toContain('つながる公式')
     expect(cards).toHaveLength(2)
     expect(within(cards[0]).getByText('2件 · 18日目')).toBeInTheDocument()
+  })
+
+  it('shows the selected tab\'s spots when switching tabs while the distance sort is still locating', async () => {
+    const user = userEvent.setup()
+    renderListAt('/spots')
+    await user.click(screen.getByRole('button', { name: '近い順' }))
+    expect(screen.getByText('現在地を取得中…')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('tab', { name: 'ユーザー登録' }))
+    expect(screen.getByRole('link', { name: /駅前の桜/ })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /大噴水前/ })).not.toBeInTheDocument()
   })
 })

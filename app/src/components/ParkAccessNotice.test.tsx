@@ -1,13 +1,31 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DemoBanner, ParkAccessNotice } from './ParkAccessNotice'
 
 describe('ParkAccessNotice', () => {
-  it('shows only a status line while checking', () => {
-    render(<ParkAccessNotice access={{ status: 'checking' }} onRetry={vi.fn()} onStartDemo={vi.fn()} />)
-    expect(screen.getByRole('status')).toHaveTextContent('現在地を確認中…')
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
+  it('shows a status line while checking, and reveals only the demo entry after a delay', () => {
+    vi.useFakeTimers()
+    try {
+      const onRetry = vi.fn()
+      const onStartDemo = vi.fn()
+      render(<ParkAccessNotice access={{ status: 'checking' }} onRetry={onRetry} onStartDemo={onStartDemo} />)
+      expect(screen.getByRole('status')).toHaveTextContent('現在地を確認中…')
+      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+
+      act(() => {
+        vi.advanceTimersByTime(3000)
+      })
+      expect(screen.getByRole('status')).toHaveTextContent('現在地を確認中…')
+      expect(screen.getByText('デモ投稿は操作を試せますが、保存はされません。')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: '現在地を再確認' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: '位置情報を許可して再試行' })).not.toBeInTheDocument()
+      fireEvent.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+      expect(onStartDemo).toHaveBeenCalledTimes(1)
+      expect(onRetry).not.toHaveBeenCalled()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('explains that posting is for inside the park, and offers re-check and demo when outside', async () => {

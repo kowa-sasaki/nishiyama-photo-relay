@@ -24,7 +24,7 @@ export function SharePage() {
         </li>
         <li>
           <span className="share-page__howto-step" aria-hidden="true">2</span>
-          「＋投稿」で写真を撮って、タグとひとことを添えて送信。ログインも登録もいりません。
+          「＋投稿」で写真を撮って、タグとひとことを添えて送信。投稿は西山公園の中から（公園の外ではデモ投稿を試せます）。ログインも登録もいりません。
         </li>
         <li>
           <span className="share-page__howto-step" aria-hidden="true">3</span>

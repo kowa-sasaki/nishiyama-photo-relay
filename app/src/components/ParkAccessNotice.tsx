@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { ParkAccessState } from '../lib/useParkAccess'
 import './ParkAccessNotice.css'
 
@@ -7,13 +8,38 @@ type ParkAccessNoticeProps = {
   onStartDemo: () => void
 }
 
-export function ParkAccessNotice({ access, onRetry, onStartDemo }: ParkAccessNoticeProps) {
-  if (access.status === 'checking') {
-    return (
+// 位置情報の許可ダイアログは待ち時間に含まれず、無視され続けると確認中のまま動かない。
+// その間もデモへ進めるよう、一定時間たったらデモの入口だけを出す。
+const DEMO_REVEAL_DELAY_MS = 3000
+
+function CheckingNotice({ onStartDemo }: { onStartDemo: () => void }) {
+  const [demoRevealed, setDemoRevealed] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDemoRevealed(true), DEMO_REVEAL_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [])
+
+  return (
+    <div className="park-access">
       <p className="park-access__status" role="status">
         現在地を確認中…
       </p>
-    )
+      {demoRevealed && (
+        <>
+          <button type="button" className="park-access__button" onClick={onStartDemo}>
+            デモ投稿を試す
+          </button>
+          <p className="park-access__hint">デモ投稿は操作を試せますが、保存はされません。</p>
+        </>
+      )}
+    </div>
+  )
+}
+
+export function ParkAccessNotice({ access, onRetry, onStartDemo }: ParkAccessNoticeProps) {
+  if (access.status === 'checking') {
+    return <CheckingNotice onStartDemo={onStartDemo} />
   }
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useSpots } from '../lib/useSpots'
 import { useAllPosts } from '../lib/useAllPosts'
@@ -9,7 +9,6 @@ import { getSuccessionDaysBySpot, sortSpotsBySuccessionDays } from '../lib/succe
 import { sortSpotsByDistance, getDistancesBySpot, formatDistanceLabel } from '../lib/distance'
 import { getPostImageUrl } from '../lib/postImage'
 import { DEFAULT_SPOT_TAB, SPOT_TABS, parseSpotTab, type SpotTab } from '../lib/spotTabs'
-import type { Spot } from '../lib/types'
 import './SpotsListPage.css'
 
 type SortMode = 'popularity' | 'succession' | 'distance'
@@ -30,7 +29,6 @@ export function SpotsListPage() {
   const [fallbackSortMode, setFallbackSortMode] = useState<'popularity' | 'succession'>('popularity')
   const [geoError, setGeoError] = useState(false)
   const { state: geoState } = useGeolocation(sortMode === 'distance')
-  const stableSpotsRef = useRef<Spot[]>([])
 
   useEffect(() => {
     if (sortMode === 'distance' && geoState.status === 'error') {
@@ -59,19 +57,14 @@ export function SpotsListPage() {
     if (state.status !== 'loaded') return []
     const posts = postsState.status === 'loaded' ? postsState.posts : []
     const now = new Date()
-    let result: Spot[]
-    if (sortMode === 'popularity') {
-      result = sortSpotsByPopularity(tabSpots, posts, now)
-    } else if (sortMode === 'succession') {
-      result = sortSpotsBySuccessionDays(tabSpots, posts, now)
-    } else if (geoState.status === 'success') {
-      result = sortSpotsByDistance(tabSpots, { lat: geoState.lat, lng: geoState.lng })
-    } else {
-      return stableSpotsRef.current.filter((spot) => spot.kind === tab)
+    if (sortMode === 'popularity') return sortSpotsByPopularity(tabSpots, posts, now)
+    if (sortMode === 'succession') return sortSpotsBySuccessionDays(tabSpots, posts, now)
+    if (geoState.status === 'success') {
+      return sortSpotsByDistance(tabSpots, { lat: geoState.lat, lng: geoState.lng })
     }
-    stableSpotsRef.current = result
-    return result
-  }, [state, tabSpots, tab, postsState, sortMode, geoState])
+    // 位置情報の取得中は、選択中のタブの定点をDB順のまま出しておく
+    return tabSpots
+  }, [state, tabSpots, postsState, sortMode, geoState])
 
   const distances = useMemo(() => {
     if (state.status !== 'loaded' || geoState.status !== 'success') return new Map<string, number>()
