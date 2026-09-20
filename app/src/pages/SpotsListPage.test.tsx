@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, useLocation } from 'react-router-dom'
 import { SpotsListPage } from './SpotsListPage'
 import * as useSpotsModule from '../lib/useSpots'
 import * as useAllPostsModule from '../lib/useAllPosts'
@@ -10,6 +10,7 @@ import type { GeolocationState } from '../lib/useGeolocation'
 import { getSupabaseClientSafe } from '../lib/supabaseClient'
 import * as postImageModule from '../lib/postImage'
 import { distanceMeters, formatDistanceLabel } from '../lib/distance'
+import type { Spot } from '../lib/types'
 
 vi.mock('../lib/supabaseClient', () => ({ getSupabaseClient: vi.fn(), getSupabaseClientSafe: vi.fn() }))
 
@@ -89,7 +90,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-06-01T00:00:00Z',
         },
@@ -155,7 +156,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -166,7 +167,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -213,7 +214,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -224,7 +225,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -294,7 +295,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -373,7 +374,7 @@ describe('SpotsListPage', () => {
           lat: 0,
           lng: 0,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-06-01T00:00:00Z',
         },
@@ -428,7 +429,7 @@ describe('SpotsListPage', () => {
           lat: far.lat,
           lng: far.lng,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -439,7 +440,7 @@ describe('SpotsListPage', () => {
           lat: near.lat,
           lng: near.lng,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -477,7 +478,7 @@ describe('SpotsListPage', () => {
           lat: 35.9,
           lng: 136.2,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -542,7 +543,7 @@ describe('SpotsListPage', () => {
           lat: 35.9,
           lng: 136.2,
           description: null,
-          kind: 'user',
+          kind: 'official',
           order: null,
           created_at: '2026-01-01T00:00:00Z',
         },
@@ -582,5 +583,141 @@ describe('SpotsListPage', () => {
     expect(
       screen.queryByText('位置情報を取得できませんでした。設定を確認して再試行してください'),
     ).not.toBeInTheDocument()
+  })
+})
+
+function makeSpot(overrides: Partial<Spot>): Spot {
+  return {
+    id: 'spot-x',
+    name: '定点',
+    theme: null,
+    lat: 0,
+    lng: 0,
+    description: null,
+    kind: 'official',
+    order: null,
+    created_at: '2026-06-01T00:00:00Z',
+    ...overrides,
+  }
+}
+
+function LocationProbe() {
+  const location = useLocation()
+  return <p data-testid="location-search">{location.search}</p>
+}
+
+function renderListAt(url: string) {
+  return render(
+    <MemoryRouter initialEntries={[url]}>
+      <SpotsListPage />
+      <LocationProbe />
+    </MemoryRouter>,
+  )
+}
+
+describe('SpotsListPage tabs', () => {
+  const spots = [
+    makeSpot({ id: 'spot-o', name: '大噴水前', kind: 'official', order: 1 }),
+    makeSpot({ id: 'spot-u', name: '駅前の桜', kind: 'user', theme: 'みんなで見守る桜' }),
+    makeSpot({ id: 'spot-c', name: '春まつり会場', kind: 'collab' }),
+  ]
+
+  beforeEach(() => {
+    vi.spyOn(useSpotsModule, 'useSpots').mockReturnValue({ status: 'loaded', spots })
+    // 既存テストの位置情報モックが残らないよう、実フックの未取得状態（loading）に戻す
+    vi.spyOn(useGeolocationModule, 'useGeolocation').mockReturnValue({
+      state: { status: 'loading' },
+      retry: vi.fn(),
+    })
+  })
+
+  it('shows the three tabs and selects 公式 by default, listing only official spots', () => {
+    renderListAt('/spots')
+    const tabs = screen.getAllByRole('tab').map((el) => el.textContent)
+    expect(tabs).toEqual(['公式', 'ユーザー登録', 'コラボ'])
+    expect(screen.getByRole('tab', { name: '公式' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: /大噴水前/ })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /駅前の桜/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /春まつり会場/ })).not.toBeInTheDocument()
+  })
+
+  it('opens the tab named in ?tab= and lists only that kind', () => {
+    renderListAt('/spots?tab=user')
+    expect(screen.getByRole('tab', { name: 'ユーザー登録' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: /駅前の桜/ })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /大噴水前/ })).not.toBeInTheDocument()
+  })
+
+  it('falls back to 公式 for an unknown ?tab= value', () => {
+    renderListAt('/spots?tab=nope')
+    expect(screen.getByRole('tab', { name: '公式' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: /大噴水前/ })).toBeInTheDocument()
+  })
+
+  it('switches the list and the URL when a tab is clicked, and clears ?tab= for 公式', async () => {
+    const user = userEvent.setup()
+    renderListAt('/spots')
+    await user.click(screen.getByRole('tab', { name: 'コラボ' }))
+    expect(screen.getByRole('tab', { name: 'コラボ' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('link', { name: /春まつり会場/ })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /大噴水前/ })).not.toBeInTheDocument()
+    expect(screen.getByTestId('location-search')).toHaveTextContent('?tab=collab')
+
+    await user.click(screen.getByRole('tab', { name: '公式' }))
+    expect(screen.getByRole('link', { name: /大噴水前/ })).toBeInTheDocument()
+    expect(screen.getByTestId('location-search').textContent).toBe('')
+  })
+
+  it('shows the coming-soon message on an empty コラボ tab and keeps the tab visible', () => {
+    vi.spyOn(useSpotsModule, 'useSpots').mockReturnValue({
+      status: 'loaded',
+      spots: [makeSpot({ id: 'spot-o', name: '大噴水前', kind: 'official' })],
+    })
+    renderListAt('/spots?tab=collab')
+    expect(screen.getByRole('tab', { name: 'コラボ' })).toBeInTheDocument()
+    expect(screen.getByText('イベント連携の定点がここに並びます（準備中）')).toBeInTheDocument()
+  })
+
+  it('shows the generic empty message on an empty ユーザー登録 tab', () => {
+    vi.spyOn(useSpotsModule, 'useSpots').mockReturnValue({
+      status: 'loaded',
+      spots: [makeSpot({ id: 'spot-o', name: '大噴水前', kind: 'official' })],
+    })
+    renderListAt('/spots?tab=user')
+    expect(screen.getByText('このタブの定点はまだありません')).toBeInTheDocument()
+  })
+
+  it('applies the sort buttons within the selected tab only', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-08-19T00:00:00Z'))
+    const user = userEvent.setup()
+    vi.spyOn(useSpotsModule, 'useSpots').mockReturnValue({
+      status: 'loaded',
+      spots: [
+        makeSpot({ id: 'spot-quiet', name: '静かな公式', kind: 'official' }),
+        makeSpot({ id: 'spot-chain', name: 'つながる公式', kind: 'official' }),
+        makeSpot({ id: 'spot-user', name: 'ユーザー定点', kind: 'user', theme: 'お題' }),
+      ],
+    })
+    vi.spyOn(useAllPostsModule, 'useAllPosts').mockReturnValue({
+      status: 'loaded',
+      posts: ['2026-08-01T00:00:00Z', '2026-08-10T00:00:00Z'].map((created_at, index) => ({
+        id: `p${index}`,
+        spot_id: 'spot-chain',
+        image_path: `${index}.jpg`,
+        comment: null,
+        tags: [],
+        avg_color: '#000000',
+        created_at,
+        device_id: 'd1',
+        spots: { name: 'つながる公式' },
+      })),
+    })
+    renderListAt('/spots')
+    await user.click(screen.getByRole('button', { name: '継続中' }))
+    const cards = within(screen.getByRole('list')).getAllByRole('link')
+    expect(cards.map((el) => el.textContent)[0]).toContain('つながる公式')
+    expect(cards).toHaveLength(2)
+    expect(within(cards[0]).getByText('2件 · 18日目')).toBeInTheDocument()
   })
 })

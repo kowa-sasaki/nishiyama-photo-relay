@@ -105,3 +105,34 @@
 .spots-list__geo-status--error {
   color: var(--status-warn-text);
 }
+
+.spots-list__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--ribbon-snow);
+  margin-bottom: 12px;
+}
+
+.spots-list__tab {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 8px;
+  margin-bottom: -1px;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.spots-list__tab[aria-selected='true'] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.spots-list__empty {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin: 0 0 12px;
+}

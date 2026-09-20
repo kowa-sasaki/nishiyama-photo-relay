@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useSpots } from '../lib/useSpots'
 import { useAllPosts } from '../lib/useAllPosts'
 import { useGeolocation } from '../lib/useGeolocation'
@@ -8,6 +8,7 @@ import { getLatestPostImageBySpot, countAllPostsBySpot, sortSpotsByPopularity } 
 import { getSuccessionDaysBySpot, sortSpotsBySuccessionDays } from '../lib/successionDays'
 import { sortSpotsByDistance, getDistancesBySpot, formatDistanceLabel } from '../lib/distance'
 import { getPostImageUrl } from '../lib/postImage'
+import { DEFAULT_SPOT_TAB, SPOT_TABS, parseSpotTab, type SpotTab } from '../lib/spotTabs'
 import type { Spot } from '../lib/types'
 import './SpotsListPage.css'
 
@@ -15,6 +16,14 @@ type SortMode = 'popularity' | 'succession' | 'distance'
 
 export function SpotsListPage() {
   const { client, envError } = getSupabaseClientSafe()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = parseSpotTab(searchParams.get('tab'))
+  const tabConfig = SPOT_TABS.find((item) => item.kind === tab) ?? SPOT_TABS[0]
+
+  function selectTab(next: SpotTab) {
+    setSearchParams(next === DEFAULT_SPOT_TAB ? {} : { tab: next }, { replace: true })
+  }
+
   const state = useSpots(client)
   const postsState = useAllPosts(client)
   const [sortMode, setSortMode] = useState<SortMode>('popularity')
@@ -41,23 +50,28 @@ export function SpotsListPage() {
     setSortMode('distance')
   }
 
+  const tabSpots = useMemo(
+    () => (state.status === 'loaded' ? state.spots.filter((spot) => spot.kind === tab) : []),
+    [state, tab],
+  )
+
   const sortedSpots = useMemo(() => {
     if (state.status !== 'loaded') return []
     const posts = postsState.status === 'loaded' ? postsState.posts : []
     const now = new Date()
     let result: Spot[]
     if (sortMode === 'popularity') {
-      result = sortSpotsByPopularity(state.spots, posts, now)
+      result = sortSpotsByPopularity(tabSpots, posts, now)
     } else if (sortMode === 'succession') {
-      result = sortSpotsBySuccessionDays(state.spots, posts, now)
+      result = sortSpotsBySuccessionDays(tabSpots, posts, now)
     } else if (geoState.status === 'success') {
-      result = sortSpotsByDistance(state.spots, { lat: geoState.lat, lng: geoState.lng })
+      result = sortSpotsByDistance(tabSpots, { lat: geoState.lat, lng: geoState.lng })
     } else {
-      return stableSpotsRef.current
+      return stableSpotsRef.current.filter((spot) => spot.kind === tab)
     }
     stableSpotsRef.current = result
     return result
-  }, [state, postsState, sortMode, geoState])
+  }, [state, tabSpots, tab, postsState, sortMode, geoState])
 
   const distances = useMemo(() => {
     if (state.status !== 'loaded' || geoState.status !== 'success') return new Map<string, number>()
@@ -101,6 +115,20 @@ export function SpotsListPage() {
       {state.status === 'error' && <p>定点一覧を取得できませんでした: {state.message}</p>}
       {state.status === 'loaded' && postsState.status !== 'loading' && (
         <>
+          <div role="tablist" aria-label="定点の種類" className="spots-list__tabs">
+            {SPOT_TABS.map((item) => (
+              <button
+                key={item.kind}
+                type="button"
+                role="tab"
+                aria-selected={item.kind === tab}
+                className="spots-list__tab"
+                onClick={() => selectTab(item.kind)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
           <div role="group" aria-label="並び替え" className="spots-list__sort">
             <button
               type="button"
@@ -135,6 +163,7 @@ export function SpotsListPage() {
               位置情報を取得できませんでした。設定を確認して再試行してください
             </p>
           )}
+          {tabSpots.length === 0 && <p className="spots-list__empty">{tabConfig.emptyMessage}</p>}
           <ul className="spots-list">
             {sortedSpots.map((spot) => {
               const postCount = postCounts.get(spot.id) ?? 0
