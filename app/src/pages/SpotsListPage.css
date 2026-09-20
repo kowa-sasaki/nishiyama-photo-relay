@@ -115,7 +115,7 @@
 .spots-list__tab {
   flex: 1;
   min-height: 44px;
-  padding: 0 8px;
+  padding: 0 4px;
   margin-bottom: -1px;
   background: transparent;
   border: 0;
@@ -123,6 +123,7 @@
   color: var(--text-muted);
   font: inherit;
   font-size: 0.875rem;
+  white-space: nowrap;
   cursor: pointer;
 }
 
