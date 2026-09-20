@@ -37,8 +37,13 @@ export function SpotDetailPage() {
     )
   }
 
+  const backTo = state.status === 'loaded' ? `/spots?tab=${state.spot.kind}` : '/spots'
+
   return (
     <section aria-labelledby="spot-detail-heading">
+      <Link to={backTo} className="spot-detail__back">
+        ← 定点一覧へ
+      </Link>
       {state.status === 'loading' && (
         <>
           <h1 id="spot-detail-heading">定点詳細</h1>

@@ -253,3 +253,44 @@ describe('SpotDetailPage', () => {
     expect(within(screen.getByRole('dialog')).getByText('2枚目')).toBeInTheDocument()
   })
 })
+
+describe('SpotDetailPage back link', () => {
+  const loadedSpot = (kind: 'official' | 'user' | 'collab') => ({
+    status: 'loaded' as const,
+    spot: {
+      id: 'spot-1',
+      name: '定点',
+      theme: kind === 'user' ? 'お題' : null,
+      lat: 0,
+      lng: 0,
+      description: null,
+      kind,
+      order: null,
+      created_at: '2026-06-01T00:00:00Z',
+    },
+    posts: [],
+  })
+
+  it('links back to the official tab of the list for an official spot', () => {
+    vi.spyOn(useSpotModule, 'useSpot').mockReturnValue(loadedSpot('official'))
+    renderAtSpot('spot-1')
+    expect(screen.getByRole('link', { name: '← 定点一覧へ' })).toHaveAttribute('href', '/spots?tab=official')
+  })
+
+  it('links back to the matching tab for user and collab spots', () => {
+    vi.spyOn(useSpotModule, 'useSpot').mockReturnValue(loadedSpot('user'))
+    const { unmount } = renderAtSpot('spot-1')
+    expect(screen.getByRole('link', { name: '← 定点一覧へ' })).toHaveAttribute('href', '/spots?tab=user')
+    unmount()
+
+    vi.spyOn(useSpotModule, 'useSpot').mockReturnValue(loadedSpot('collab'))
+    renderAtSpot('spot-1')
+    expect(screen.getByRole('link', { name: '← 定点一覧へ' })).toHaveAttribute('href', '/spots?tab=collab')
+  })
+
+  it('links to the plain list while the spot is still loading', () => {
+    vi.spyOn(useSpotModule, 'useSpot').mockReturnValue({ status: 'loading' })
+    renderAtSpot('spot-1')
+    expect(screen.getByRole('link', { name: '← 定点一覧へ' })).toHaveAttribute('href', '/spots')
+  })
+})
