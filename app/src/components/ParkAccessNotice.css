@@ -1,0 +1,47 @@
+.park-access {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.park-access p {
+  margin: 0;
+}
+
+.park-access__status {
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.park-access__hint {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.park-access__button {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--ribbon-snow);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.park-access__button--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+.park-access__banner {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--status-warn-bg);
+  color: var(--status-warn-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
