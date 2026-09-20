@@ -213,3 +213,43 @@ describe('getSuccessionDaysBySpot', () => {
     expect(result.has('spot-solo')).toBe(false)
   })
 })
+
+describe('succession days apply to every spot kind (list page)', () => {
+  it('getSuccessionDaysBySpot includes official and collab spots with a connected recent chain', () => {
+    const spots = [
+      makeSpot({ id: 'spot-official', kind: 'official', theme: null }),
+      makeSpot({ id: 'spot-collab', kind: 'collab' }),
+    ]
+    const posts = [
+      makePost({ id: 'p1', spot_id: 'spot-official', created_at: '2026-08-10T00:00:00Z' }),
+      makePost({ id: 'p2', spot_id: 'spot-official', created_at: '2026-08-15T00:00:00Z' }),
+      makePost({ id: 'p3', spot_id: 'spot-collab', created_at: '2026-08-12T00:00:00Z' }),
+      makePost({ id: 'p4', spot_id: 'spot-collab', created_at: '2026-08-16T00:00:00Z' }),
+    ]
+    const result = getSuccessionDaysBySpot(spots, posts, NOW)
+    expect(result.get('spot-official')).toEqual({ days: 9, latestPostAt: '2026-08-15T00:00:00Z' })
+    expect(result.get('spot-collab')).toEqual({ days: 7, latestPostAt: '2026-08-16T00:00:00Z' })
+  })
+
+  it('sortSpotsBySuccessionDays ranks a qualifying official spot ahead of a quiet spot', () => {
+    const spots = [
+      makeSpot({ id: 'spot-quiet', name: '静かな定点', kind: 'official', theme: null }),
+      makeSpot({ id: 'spot-official', name: '大噴水前', kind: 'official', theme: null }),
+    ]
+    const posts = [
+      makePost({ id: 'p1', spot_id: 'spot-official', created_at: '2026-08-10T00:00:00Z' }),
+      makePost({ id: 'p2', spot_id: 'spot-official', created_at: '2026-08-15T00:00:00Z' }),
+    ]
+    const result = sortSpotsBySuccessionDays(spots, posts, NOW)
+    expect(result.map((s) => s.id)).toEqual(['spot-official', 'spot-quiet'])
+  })
+
+  it('buildSuccessionDaysRanking (home) still excludes collab spots', () => {
+    const spots = [makeSpot({ id: 'spot-collab', kind: 'collab' })]
+    const posts = [
+      makePost({ id: 'p1', spot_id: 'spot-collab', created_at: '2026-08-10T00:00:00Z' }),
+      makePost({ id: 'p2', spot_id: 'spot-collab', created_at: '2026-08-15T00:00:00Z' }),
+    ]
+    expect(buildSuccessionDaysRanking(spots, posts, NOW)).toEqual([])
+  })
+})

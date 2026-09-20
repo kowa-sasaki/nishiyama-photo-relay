@@ -11,6 +11,10 @@ const DEFAULT_WINDOW_DAYS = 14
 const DEFAULT_TOP_N = 3
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 
+// ホームのランキングは「みんなの定点」(ユーザー定点)だけが対象。
+// 定点一覧の継続日数表示は全種別が対象(kinds未指定)。
+const RANKING_KINDS: ReadonlyArray<Spot['kind']> = ['user']
+
 type ActiveChain = {
   firstPostAtMs: number
   latestPostAtMs: number
@@ -51,6 +55,7 @@ function buildSuccessionDaysBySpot(
   posts: Post[],
   now: Date,
   windowDays: number,
+  kinds?: ReadonlyArray<Spot['kind']>,
 ): Map<string, { days: number; latestPostAt: string }> {
   const windowMs = windowDays * MS_PER_DAY
   const nowMs = now.getTime()
@@ -67,7 +72,7 @@ function buildSuccessionDaysBySpot(
 
   const result = new Map<string, { days: number; latestPostAt: string }>()
   for (const spot of spots) {
-    if (spot.kind !== 'user') continue
+    if (kinds && !kinds.includes(spot.kind)) continue
     const times = postTimesBySpot.get(spot.id)
     if (!times || times.length < 2) continue
 
@@ -95,7 +100,7 @@ export function buildSuccessionDaysRanking(
 ): SuccessionDaysEntry[] {
   const windowDays = options?.windowDays ?? DEFAULT_WINDOW_DAYS
   const topN = options?.topN ?? DEFAULT_TOP_N
-  const daysBySpot = buildSuccessionDaysBySpot(spots, posts, now, windowDays)
+  const daysBySpot = buildSuccessionDaysBySpot(spots, posts, now, windowDays, RANKING_KINDS)
   const spotNameById = new Map(spots.map((spot) => [spot.id, spot.name]))
 
   return Array.from(daysBySpot.entries())
