@@ -9,6 +9,7 @@ import * as useSpotsModule from '../lib/useSpots'
 import * as authModule from '../lib/AuthContext'
 import * as imageModule from '../lib/image'
 import * as createPostModule from '../lib/createPost'
+import * as useParkAccessModule from '../lib/useParkAccess'
 import { getSupabaseClientSafe } from '../lib/supabaseClient'
 
 vi.mock('../lib/supabaseClient', () => ({ getSupabaseClient: vi.fn(), getSupabaseClientSafe: vi.fn() }))
@@ -54,6 +55,10 @@ beforeEach(() => {
   vi.spyOn(imageModule, 'resizeAndAnalyzeImage').mockResolvedValue({
     blob: new Blob(['resized'], { type: 'image/jpeg' }),
     avgColor: '#f2a6c2',
+  })
+  vi.spyOn(useParkAccessModule, 'useParkAccess').mockReturnValue({
+    access: { status: 'inside', lat: 35.9503, lng: 136.1815 },
+    retry: vi.fn(),
   })
 })
 
@@ -263,5 +268,78 @@ describe('PostFlowPage', () => {
     await waitFor(() => expect(screen.getByLabelText('ひとこと（任意）')).toBeInTheDocument())
 
     expect(galleryInput.value).toBe('')
+  })
+})
+
+describe('PostFlowPage park gate', () => {
+  function mockAccess(access: useParkAccessModule.ParkAccessState, retry = vi.fn()) {
+    vi.spyOn(useParkAccessModule, 'useParkAccess').mockReturnValue({ access, retry })
+    return retry
+  }
+
+  it('shows a checking status and no file pickers while the location is being checked', () => {
+    mockAccess({ status: 'checking' })
+    renderPostFlowPage()
+    expect(screen.getByText('現在地を確認中…')).toBeInTheDocument()
+    expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
+  })
+
+  it('blocks posting outside the park: no file pickers, explanation, and a demo button', () => {
+    mockAccess({ status: 'outside', lat: 35.9, lng: 136.2 })
+    renderPostFlowPage()
+    expect(screen.getByText('対象の定点: 大噴水前')).toBeInTheDocument()
+    expect(screen.getByText('投稿は西山公園の中でできます。公園内で開き直してください。')).toBeInTheDocument()
+    expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('カメラで撮る')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'デモ投稿を試す' })).toBeInTheDocument()
+  })
+
+  it('blocks posting when location is unavailable and retries on request', async () => {
+    const user = userEvent.setup()
+    const retry = mockAccess({ status: 'unavailable', message: 'denied' })
+    renderPostFlowPage()
+    expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '位置情報を許可して再試行' }))
+    expect(retry).toHaveBeenCalledTimes(1)
+  })
+
+  it('runs the whole flow in demo mode without saving anything', async () => {
+    const user = userEvent.setup()
+    // Spies are not restored between tests, so drop calls recorded by earlier tests.
+    const createPostSpy = vi.spyOn(createPostModule, 'createPost').mockClear()
+    mockAccess({ status: 'outside', lat: 35.9, lng: 136.2 })
+    renderPostFlowPage()
+
+    await user.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+    expect(screen.getByText('デモ：保存されません')).toBeInTheDocument()
+
+    const file = new File(['fake'], 'photo.jpg', { type: 'image/jpeg' })
+    await user.upload(screen.getByLabelText('ギャラリーから選ぶ'), file)
+    await waitFor(() => expect(screen.getByLabelText('ひとこと（任意）')).toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: '次へ' }))
+    await user.click(screen.getByRole('button', { name: '送信する' }))
+
+    expect(await screen.findByText('デモ投稿が完了しました')).toBeInTheDocument()
+    expect(screen.getByText('デモのため保存されていません。')).toBeInTheDocument()
+    expect(createPostSpy).not.toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: '共有する' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/件目/)).not.toBeInTheDocument()
+  })
+
+  it('lets demo mode submit even when anonymous auth is not ready', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(authModule, 'useAuth').mockReturnValue({ status: 'loading' })
+    mockAccess({ status: 'unavailable', message: 'denied' })
+    renderPostFlowPage()
+
+    await user.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+    await user.upload(
+      screen.getByLabelText('ギャラリーから選ぶ'),
+      new File(['fake'], 'photo.jpg', { type: 'image/jpeg' }),
+    )
+    await waitFor(() => expect(screen.getByLabelText('ひとこと（任意）')).toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: '次へ' }))
+    expect(screen.getByRole('button', { name: '送信する' })).toBeEnabled()
+    expect(screen.queryByText('認証準備中…')).not.toBeInTheDocument()
   })
 })

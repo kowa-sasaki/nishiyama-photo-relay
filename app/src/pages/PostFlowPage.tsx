@@ -10,6 +10,8 @@ import { TagInput } from '../components/TagInput'
 import { ShareButton } from '../components/ShareButton'
 import { createPost } from '../lib/createPost'
 import { SHARE_HASHTAG } from '../lib/shareText'
+import { useParkAccess } from '../lib/useParkAccess'
+import { ParkAccessNotice, DemoBanner } from '../components/ParkAccessNotice'
 import './PostFlowPage.css'
 
 type Step = 'select' | 'compose' | 'confirm' | 'done'
@@ -17,6 +19,8 @@ type Step = 'select' | 'compose' | 'confirm' | 'done'
 export function PostFlowPage() {
   const { client, envError } = getSupabaseClientSafe()
   const auth = useAuth()
+  const { access, retry: retryAccess } = useParkAccess()
+  const [demo, setDemo] = useState(false)
   const { lastViewedSpotId } = useLastViewedSpot()
   const spotsState = useSpots(client)
   const fallbackSpotId =
@@ -60,6 +64,10 @@ export function PostFlowPage() {
   }
 
   async function handleSubmit() {
+    if (demo) {
+      setStep('done')
+      return
+    }
     if (!targetSpotId || !pendingBlob || !avgColor || auth.status !== 'signed-in') return
     setSubmitting(true)
     setSubmitError(null)
@@ -136,9 +144,20 @@ export function PostFlowPage() {
 
   const { spot } = spotState
 
+  if (!demo && access.status !== 'inside') {
+    return (
+      <section aria-labelledby="post-heading">
+        <h1 id="post-heading">投稿</h1>
+        <p className="post-flow__target">対象の定点: {spot.name}</p>
+        <ParkAccessNotice access={access} onRetry={retryAccess} onStartDemo={() => setDemo(true)} />
+      </section>
+    )
+  }
+
   return (
     <section aria-labelledby="post-heading">
       <h1 id="post-heading">投稿</h1>
+      {demo && <DemoBanner />}
       <p className="post-flow__target">対象の定点: {spot.name}</p>
 
       {step === 'select' && (
@@ -202,8 +221,8 @@ export function PostFlowPage() {
           <p>{spot.name}</p>
           <p>{tags.join('、')}</p>
           <p>{comment}</p>
-          {auth.status === 'loading' && <p>認証準備中…</p>}
-          {auth.status === 'error' && <p className="post-flow__error">認証に失敗しました: {auth.message}</p>}
+          {!demo && auth.status === 'loading' && <p>認証準備中…</p>}
+          {!demo && auth.status === 'error' && <p className="post-flow__error">認証に失敗しました: {auth.message}</p>}
           {submitError && <p className="post-flow__error">送信に失敗しました: {submitError}</p>}
           <div className="post-flow__actions">
             <button
@@ -217,7 +236,7 @@ export function PostFlowPage() {
               type="button"
               className="post-flow__button post-flow__button--primary"
               onClick={() => void handleSubmit()}
-              disabled={submitting || auth.status !== 'signed-in'}
+              disabled={submitting || (!demo && auth.status !== 'signed-in')}
             >
               送信する
             </button>
@@ -225,7 +244,19 @@ export function PostFlowPage() {
         </div>
       )}
 
-      {step === 'done' && (
+      {step === 'done' && demo && (
+        <div className="post-flow__done">
+          <p className="post-flow__done-title">デモ投稿が完了しました</p>
+          <p>デモのため保存されていません。</p>
+          <div className="post-flow__done-actions">
+            <Link to={`/spots/${spot.id}`} className="post-flow__button post-flow__button--secondary">
+              この定点を見る
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {step === 'done' && !demo && (
         <div className="post-flow__done">
           <p className="post-flow__done-title">送信しました！</p>
           <p className="tabular-nums">この定点への投稿 {spotState.posts.length + 1}件目</p>
