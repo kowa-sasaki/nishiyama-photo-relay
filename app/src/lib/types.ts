@@ -5,7 +5,7 @@ export type Spot = {
   lat: number
   lng: number
   description: string | null
-  kind: 'official' | 'user'
+  kind: 'official' | 'user' | 'collab'
   order: number | null
   created_at: string
 }
