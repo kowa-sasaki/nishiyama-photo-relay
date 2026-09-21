@@ -12,8 +12,13 @@
   margin: 0 0 12px;
 }
 
+/* 前置きはブランド名より一段小さく、常に1行目に置く（小さくすると横幅に収まって横並びになるため block にする） */
 .home-page__title-lead {
+  display: block;
+  font-size: 0.62em;
   font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
   color: var(--text-muted);
 }
 
