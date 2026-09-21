@@ -8,6 +8,10 @@
   margin: 0 0 12px;
 }
 
+.share-page__phrase {
+  display: inline-block;
+}
+
 .share-page__description {
   color: var(--text-muted);
   font-size: 0.875rem;

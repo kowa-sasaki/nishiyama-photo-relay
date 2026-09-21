@@ -11,7 +11,11 @@ export function SharePage() {
       <h1 id="share-heading" className="share-page__title">
         西山公園フォトリレー
       </h1>
-      <p className="share-page__concept">西山公園の&quot;今日&quot;を、みんなで1年分の絵にする。</p>
+      {/* 句切れで折り返すよう、2つの句をそれぞれ途中で折り返さない塊にする（「る。」だけ次の行に落ちていた） */}
+      <p className="share-page__concept">
+        <span className="share-page__phrase">西山公園の&quot;今日&quot;を、</span>
+        <span className="share-page__phrase">みんなで1年分の絵にする。</span>
+      </p>
       <p className="share-page__description">
         西山公園でお気に入りの場所を決めて、写真を撮るだけ。春のつつじのピンクから秋の紅葉の赤まで、同じ場所の写真が季節をこえてつながっていきます。あなたの1枚が、次の誰かへのバトンになります。
       </p>
