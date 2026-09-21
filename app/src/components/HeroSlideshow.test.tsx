@@ -136,4 +136,53 @@ describe('HeroSlideshow', () => {
     fireEvent.click(dots[1])
     expect(screen.getByText('上段の庭')).toBeInTheDocument()
   })
+
+  it("autoplays through the selected day's posts", () => {
+    const dayPosts = [
+      makePost({ id: 'p1', spots: { name: '大噴水前' } }),
+      makePost({ id: 'p2', spots: { name: '上段の庭' } }),
+    ]
+    const selectedDay: TimelineDay = { monthDay: '08-02', month: 8, visitors: 500, posts: dayPosts, avgColor: '#4c7a32' }
+    render(
+      <MemoryRouter>
+        <HeroSlideshow client={createMockClient()} recentPosts={[]} selectedDay={selectedDay} />
+      </MemoryRouter>,
+    )
+    expect(screen.getByText('大噴水前')).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(2800)
+    })
+    expect(screen.getByText('上段の庭')).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(2800)
+    })
+    expect(screen.getByText('大噴水前')).toBeInTheDocument()
+  })
+
+  it('restarts the autoplay timer after a dot is tapped, so the chosen photo stays for a full interval', () => {
+    const dayPosts = [
+      makePost({ id: 'p1', spots: { name: '大噴水前' } }),
+      makePost({ id: 'p2', spots: { name: '上段の庭' } }),
+      makePost({ id: 'p3', spots: { name: '展望台' } }),
+    ]
+    const selectedDay: TimelineDay = { monthDay: '08-02', month: 8, visitors: 500, posts: dayPosts, avgColor: '#4c7a32' }
+    render(
+      <MemoryRouter>
+        <HeroSlideshow client={createMockClient()} recentPosts={[]} selectedDay={selectedDay} />
+      </MemoryRouter>,
+    )
+    act(() => {
+      vi.advanceTimersByTime(2000)
+    })
+    fireEvent.click(screen.getByRole('button', { name: '3枚目の写真を表示' }))
+    expect(screen.getByText('展望台')).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+    expect(screen.getByText('展望台')).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(1800)
+    })
+    expect(screen.getByText('大噴水前')).toBeInTheDocument()
+  })
 })

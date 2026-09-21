@@ -71,23 +71,37 @@
 
 .hero-slideshow__dots {
   position: absolute;
-  bottom: 10px;
-  right: 12px;
+  bottom: 2px;
+  right: 4px;
   display: flex;
-  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: calc(100% - 8px);
 }
 
+/* 見た目の点は小さいまま、指で押せる大きさ(24px四方)を確保する。
+   押し損ねると下の写真リンクに当たり、定点ページへ移動してしまうため。 */
 .hero-slideshow__dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   border: none;
   padding: 0;
-  background: var(--photo-dot-idle);
+  background: transparent;
   cursor: pointer;
 }
 
-.hero-slideshow__dot--active {
+.hero-slideshow__dot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--photo-dot-idle);
+}
+
+.hero-slideshow__dot--active::before {
   background: var(--on-photo);
 }
 

@@ -25,14 +25,16 @@ export function HeroSlideshow({ client, recentPosts, selectedDay }: HeroSlidesho
     setSubIdx(0)
   }, [selectedDay?.monthDay])
 
+  // 日付を選んだときもその日の写真を順に送る。subIdx が変わるたびに待ち時間を数え直すので、
+  // ドットで選んだ写真もすぐには切り替わらない。
   useEffect(() => {
-    if (selectedDay !== null || autoplayPool.length <= 1) return
+    if (photos.length <= 1) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const id = setInterval(() => {
-      setSubIdx((i) => (i + 1) % autoplayPool.length)
+    const id = setTimeout(() => {
+      setSubIdx((i) => (i + 1) % photos.length)
     }, AUTOPLAY_INTERVAL_MS)
-    return () => clearInterval(id)
-  }, [selectedDay, autoplayPool])
+    return () => clearTimeout(id)
+  }, [photos, subIdx])
 
   if (photos.length === 0) {
     return (
@@ -63,7 +65,7 @@ export function HeroSlideshow({ client, recentPosts, selectedDay }: HeroSlidesho
         />
         <div className="hero-slideshow__scrim" />
         <span className="hero-slideshow__status">
-          <span className={`hero-slideshow__live-dot${selectedDay ? '' : ' hero-slideshow__live-dot--auto'}`} />
+          <span className={`hero-slideshow__live-dot${photos.length > 1 ? ' hero-slideshow__live-dot--auto' : ''}`} />
           {selectedDay ? '選択中' : '自動再生中'}
         </span>
         <div className="hero-slideshow__caption">
