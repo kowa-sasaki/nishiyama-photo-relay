@@ -14,5 +14,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],
     globals: true,
+    // 各テストで vi.spyOn したものを自動で元に戻し、前のテストの呼び出し記録やモックが漏れないようにする
+    restoreMocks: true,
   },
 })

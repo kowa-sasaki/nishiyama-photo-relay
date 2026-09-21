@@ -305,8 +305,7 @@ describe('PostFlowPage park gate', () => {
 
   it('runs the whole flow in demo mode without saving anything', async () => {
     const user = userEvent.setup()
-    // Spies are not restored between tests, so drop calls recorded by earlier tests.
-    const createPostSpy = vi.spyOn(createPostModule, 'createPost').mockClear()
+    const createPostSpy = vi.spyOn(createPostModule, 'createPost')
     mockAccess({ status: 'outside', lat: 35.9, lng: 136.2 })
     renderPostFlowPage()
 
