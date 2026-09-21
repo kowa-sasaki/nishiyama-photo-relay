@@ -35,6 +35,13 @@ export function monthDayFromIso(iso: string): string {
   return `${month}-${day}`
 }
 
+// タイムラインは非うるう年の365マスなので 02-29 のマスが無い。うるう日の投稿は 02-28 のマスに入れる。
+// 写真に添える日付ラベル（formatMonthDayLabel）は実際の日付のまま。
+export function timelineMonthDay(iso: string): string {
+  const monthDay = monthDayFromIso(iso)
+  return monthDay === '02-29' ? '02-28' : monthDay
+}
+
 export function formatMonthDayLabel(iso: string): string {
   const [month, day] = monthDayFromIso(iso).split('-')
   return `${Number(month)}/${Number(day)}`
@@ -79,12 +86,12 @@ function buildMonthDaySequence(): string[] {
 export function buildParkTimeline(posts: PostWithSpot[], visitorsDaily: VisitorDay[]): TimelineDay[] {
   const visitorsByMonthDay = new Map<string, number>()
   for (const entry of visitorsDaily) {
-    visitorsByMonthDay.set(monthDayFromIso(entry.date), entry.visitors)
+    visitorsByMonthDay.set(timelineMonthDay(entry.date), entry.visitors)
   }
 
   const postsByMonthDay = new Map<string, PostWithSpot[]>()
   for (const post of posts) {
-    const key = monthDayFromIso(post.created_at)
+    const key = timelineMonthDay(post.created_at)
     const bucket = postsByMonthDay.get(key)
     if (bucket) {
       bucket.push(post)

@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { averageHexColors, buildParkTimeline, formatMonthDayLabel, monthDayFromIso, seasonRibbonToken } from './parkTimeline'
+import {
+  averageHexColors,
+  buildParkTimeline,
+  formatMonthDayLabel,
+  monthDayFromIso,
+  seasonRibbonToken,
+  timelineMonthDay,
+} from './parkTimeline'
 import type { VisitorDay } from './parkTimeline'
 import type { PostWithSpot } from './types'
 
@@ -122,5 +129,26 @@ describe('buildParkTimeline', () => {
     const apr1 = days.find((d) => d.monthDay === '04-01')
     expect(apr1?.posts).toEqual([])
     expect(apr1?.avgColor).toBeNull()
+  })
+})
+
+describe('leap day (02-29)', () => {
+  it('folds a 02-29 post into the 02-28 cell, since the timeline has no 02-29', () => {
+    // 2028-02-29 12:00 JST
+    const leapPost = makePost({ id: 'leap', created_at: '2028-02-29T03:00:00Z', avg_color: '#123456' })
+    const days = buildParkTimeline([leapPost], [])
+    expect(days.some((d) => d.monthDay === '02-29')).toBe(false)
+    const feb28 = days.find((d) => d.monthDay === '02-28')!
+    expect(feb28.posts.map((p) => p.id)).toEqual(['leap'])
+    expect(feb28.avgColor).toBe('#123456')
+  })
+
+  it('maps a 02-29 timestamp to the 02-28 timeline key, leaving other days as-is', () => {
+    expect(timelineMonthDay('2028-02-29T03:00:00Z')).toBe('02-28')
+    expect(timelineMonthDay('2026-09-21T03:00:00Z')).toBe('09-21')
+  })
+
+  it('keeps the real date in the photo label', () => {
+    expect(formatMonthDayLabel('2028-02-29T03:00:00Z')).toBe('2/29')
   })
 })

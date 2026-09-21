@@ -3,7 +3,7 @@ import { getSupabaseClientSafe } from '../lib/supabaseClient'
 import { useAllPosts } from '../lib/useAllPosts'
 import { useSpots } from '../lib/useSpots'
 import { useVisitorsDaily } from '../lib/useVisitorsDaily'
-import { buildParkTimeline, monthDayFromIso } from '../lib/parkTimeline'
+import { buildParkTimeline, timelineMonthDay } from '../lib/parkTimeline'
 import { buildSpotRanking } from '../lib/spotRanking'
 import { buildSuccessionDaysRanking } from '../lib/successionDays'
 import { HeroSlideshow } from '../components/HeroSlideshow'
@@ -40,7 +40,7 @@ export function HomePage() {
         : [],
     [postsState, spotsState],
   )
-  const todayMonthDay = useMemo(() => monthDayFromIso(new Date().toISOString()), [])
+  const todayMonthDay = useMemo(() => timelineMonthDay(new Date().toISOString()), [])
   const selectedDay = days.find((d) => d.monthDay === selectedMonthDay) ?? null
 
   if (envError) {
