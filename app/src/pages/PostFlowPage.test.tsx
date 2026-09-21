@@ -111,7 +111,7 @@ describe('PostFlowPage', () => {
     vi.stubGlobal('navigator', { ...navigator, share })
     await user.click(screen.getByRole('button', { name: '共有する' }))
     expect(share).toHaveBeenCalledWith({
-      text: '大噴水前に投稿しました #西山公園定点観測',
+      text: '大噴水前に投稿しました #西山公園フォトリレー',
       url: 'http://localhost:3000/spots/spot-1',
     })
   })

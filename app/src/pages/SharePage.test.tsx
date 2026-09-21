@@ -27,7 +27,7 @@ describe('SharePage', () => {
     vi.spyOn(creditsModule, 'useCredits').mockReturnValue({ status: 'loading' })
     render(<SharePage />)
     expect(screen.getByRole('heading', { name: '西山公園フォトリレー' })).toBeInTheDocument()
-    expect(screen.getByText('西山公園の"今日"を、みんなで1年分の絵にする。')).toBeInTheDocument()
+    expect(document.querySelector('.share-page__concept')).toHaveTextContent('西山公園の"今日"を、みんなで1年分の絵にする。')
     expect(screen.getByRole('button', { name: '共有する' })).toBeInTheDocument()
   })
 
@@ -71,7 +71,7 @@ describe('SharePage', () => {
     render(<SharePage />)
     await user.click(screen.getByRole('button', { name: '共有する' }))
     expect(share).toHaveBeenCalledWith({
-      text: '西山公園の"今日"を、みんなで記録するアプリ #西山公園定点観測',
+      text: '西山公園の"今日"を、みんなで記録するアプリ #西山公園フォトリレー',
       url: window.location.origin,
     })
   })

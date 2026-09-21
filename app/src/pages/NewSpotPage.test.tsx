@@ -116,7 +116,7 @@ describe('NewSpotPage', () => {
     vi.stubGlobal('navigator', { ...navigator, share })
     await user.click(screen.getByRole('button', { name: '共有する' }))
     expect(share).toHaveBeenCalledWith({
-      text: '北口ベンチをつくりました #西山公園定点観測',
+      text: '北口ベンチをつくりました #西山公園フォトリレー',
       url: 'http://localhost:3000/spots/spot-new',
     })
   })
