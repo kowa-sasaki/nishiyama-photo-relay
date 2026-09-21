@@ -668,6 +668,35 @@ describe('SpotsListPage tabs', () => {
     expect(screen.getByTestId('location-search').textContent).toBe('')
   })
 
+  it('links tabs to the panel and moves selection and focus with arrow keys', async () => {
+    const user = userEvent.setup()
+    renderListAt('/spots')
+    const official = screen.getByRole('tab', { name: '公式' })
+    const panel = screen.getByRole('tabpanel')
+    expect(official).toHaveAttribute('aria-controls', panel.id)
+    expect(panel).toHaveAttribute('aria-labelledby', official.id)
+    expect(official).toHaveAttribute('tabindex', '0')
+    expect(screen.getByRole('tab', { name: 'コラボ' })).toHaveAttribute('tabindex', '-1')
+
+    official.focus()
+    await user.keyboard('{ArrowLeft}')
+    expect(screen.getByRole('tab', { name: 'コラボ' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'コラボ' })).toHaveFocus()
+
+    await user.keyboard('{Home}')
+    expect(official).toHaveAttribute('aria-selected', 'true')
+    expect(official).toHaveFocus()
+  })
+
+  it('does not render an empty list when the selected tab has no spots', () => {
+    vi.spyOn(useSpotsModule, 'useSpots').mockReturnValue({
+      status: 'loaded',
+      spots: [makeSpot({ id: 'spot-o', name: '大噴水前', kind: 'official' })],
+    })
+    renderListAt('/spots?tab=user')
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+  })
+
   it('shows the coming-soon message on an empty コラボ tab and keeps the tab visible', () => {
     vi.spyOn(useSpotsModule, 'useSpots').mockReturnValue({
       status: 'loaded',
