@@ -10,11 +10,8 @@
   text-wrap: pretty;
 }
 
-.park-access__status {
+.park-access__status--checking {
   color: var(--text-muted);
-  margin: 0;
-  word-break: auto-phrase;
-  text-wrap: pretty;
 }
 
 .park-access__hint {
@@ -38,6 +35,11 @@
   border-color: var(--accent);
   color: var(--on-accent);
   font-weight: 600;
+}
+
+.park-access__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .park-access__banner {

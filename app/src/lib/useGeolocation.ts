@@ -36,7 +36,8 @@ export function useGeolocation(enabled: boolean = true): { state: GeolocationSta
           message: error.message || '位置情報を取得できませんでした',
         })
       },
-      { timeout: 15000, maximumAge: 60000 },
+      // 再確認のときは、公園へ歩いて来た後の位置を取りたいのでキャッシュを使わない
+      { timeout: 15000, maximumAge: attempt === 0 ? 60000 : 0 },
     )
     return () => {
       cancelled = true

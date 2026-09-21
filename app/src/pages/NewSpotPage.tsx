@@ -113,7 +113,12 @@ export function NewSpotPage() {
     return (
       <section aria-labelledby="new-spot-heading">
         <h1 id="new-spot-heading">新しい定点をつくる</h1>
-        <ParkAccessNotice access={access} onRetry={retryAccess} onStartDemo={() => setDemo(true)} />
+        <ParkAccessNotice
+          access={access}
+          onRetry={retryAccess}
+          onStartDemo={() => setDemo(true)}
+          purpose="spot"
+        />
       </section>
     )
   }
@@ -265,7 +270,7 @@ export function NewSpotPage() {
 
       {step === 'done' && demo && (
         <div className="new-spot__done">
-          <p className="new-spot__done-title">デモ投稿が完了しました</p>
+          <p className="new-spot__done-title">デモの定点づくりが完了しました</p>
           <p>デモのため保存されていません。</p>
           <div className="new-spot__done-actions">
             <Link to="/spots" className="new-spot__button new-spot__button--secondary">

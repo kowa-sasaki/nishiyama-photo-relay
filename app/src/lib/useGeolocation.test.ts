@@ -110,6 +110,8 @@ describe('useGeolocation', () => {
       expect(result.current.state).toEqual({ status: 'success', lat: 1, lng: 2 }),
     )
     expect(getCurrentPosition).toHaveBeenCalledTimes(2)
+    // 再確認では古いキャッシュ位置を返さないよう maximumAge を 0 にする
+    expect(getCurrentPosition.mock.calls[1][2]).toEqual(expect.objectContaining({ maximumAge: 0 }))
   })
 
   it('does not request location while disabled', () => {

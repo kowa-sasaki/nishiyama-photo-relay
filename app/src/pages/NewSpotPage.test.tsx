@@ -150,9 +150,9 @@ describe('NewSpotPage park gate', () => {
   it('blocks creating a spot outside the park and offers the demo', () => {
     mockLocation({ status: 'success', lat: 35.9, lng: 136.2 })
     renderNewSpotPage()
-    expect(screen.getByText('投稿は西山公園の中でできます。公園内で開き直してください。')).toBeInTheDocument()
+    expect(screen.getByText('新しい定点は西山公園の中でつくれます。公園内で開き直してください。')).toBeInTheDocument()
     expect(screen.queryByLabelText('ギャラリーから選ぶ')).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'デモ投稿を試す' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'デモで定点をつくってみる' })).toBeInTheDocument()
   })
 
   it('blocks creating a spot when location is unavailable and retries on request', async () => {
@@ -166,12 +166,11 @@ describe('NewSpotPage park gate', () => {
 
   it('runs the whole flow in demo mode without saving anything', async () => {
     const user = userEvent.setup()
-    // Spies are not restored between tests, so drop calls recorded by earlier tests.
-    const createUserSpotSpy = vi.spyOn(createUserSpotModule, 'createUserSpot').mockClear()
+    const createUserSpotSpy = vi.spyOn(createUserSpotModule, 'createUserSpot')
     mockLocation({ status: 'success', lat: 35.9, lng: 136.2 })
     renderNewSpotPage()
 
-    await user.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+    await user.click(screen.getByRole('button', { name: 'デモで定点をつくってみる' }))
     expect(screen.getByText('デモ：保存されません')).toBeInTheDocument()
 
     await fillPhotoAndReachCompose(user)
@@ -180,7 +179,7 @@ describe('NewSpotPage park gate', () => {
     await user.click(screen.getByRole('button', { name: '次へ' }))
     await user.click(screen.getByRole('button', { name: '送信する' }))
 
-    expect(await screen.findByText('デモ投稿が完了しました')).toBeInTheDocument()
+    expect(await screen.findByText('デモの定点づくりが完了しました')).toBeInTheDocument()
     expect(screen.getByText('デモのため保存されていません。')).toBeInTheDocument()
     expect(createUserSpotSpy).not.toHaveBeenCalled()
     expect(screen.queryByRole('button', { name: '共有する' })).not.toBeInTheDocument()
@@ -192,7 +191,7 @@ describe('NewSpotPage park gate', () => {
     mockLocation({ status: 'error', message: 'denied' })
     renderNewSpotPage()
 
-    await user.click(screen.getByRole('button', { name: 'デモ投稿を試す' }))
+    await user.click(screen.getByRole('button', { name: 'デモで定点をつくってみる' }))
     await fillPhotoAndReachCompose(user)
     await user.type(screen.getByLabelText('定点名'), '北口ベンチ')
     await user.type(screen.getByLabelText('お題'), 'ランニング途中によってみた')
