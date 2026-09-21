@@ -26,7 +26,7 @@ describe('SharePage', () => {
   it('shows the app concept heading and a share button', () => {
     vi.spyOn(creditsModule, 'useCredits').mockReturnValue({ status: 'loading' })
     render(<SharePage />)
-    expect(screen.getByRole('heading', { name: '西山公園 定点観測フォトリレー' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '西山公園フォトリレー' })).toBeInTheDocument()
     expect(screen.getByText('西山公園の"今日"を、みんなで1年分の絵にする。')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '共有する' })).toBeInTheDocument()
   })

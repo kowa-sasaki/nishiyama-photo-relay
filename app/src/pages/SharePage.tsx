@@ -9,7 +9,7 @@ export function SharePage() {
   return (
     <section aria-labelledby="share-heading" className="share-page">
       <h1 id="share-heading" className="share-page__title">
-        西山公園 定点観測フォトリレー
+        西山公園フォトリレー
       </h1>
       <p className="share-page__concept">西山公園の&quot;今日&quot;を、みんなで1年分の絵にする。</p>
       <p className="share-page__description">
