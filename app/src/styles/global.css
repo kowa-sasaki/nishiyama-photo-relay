@@ -19,3 +19,11 @@ body {
   padding: 16px 16px 72px;
   box-sizing: border-box;
 }
+
+/* color-scheme: dark のままだとブラウザ既定の入力欄色になり、画面の面の色と揃わない */
+input[type='text'],
+input[type='search'],
+textarea {
+  background: var(--surface);
+  color: var(--text);
+}
