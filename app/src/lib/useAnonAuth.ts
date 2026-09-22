@@ -13,20 +13,26 @@ export function useAnonAuth(client: SupabaseClient): AnonAuthState {
     let cancelled = false
 
     async function signIn() {
-      const { data: sessionData } = await client.auth.getSession()
-      if (cancelled) return
-      if (sessionData.session) {
-        setState({ status: 'signed-in', userId: sessionData.session.user.id })
-        return
-      }
+      try {
+        const { data: sessionData } = await client.auth.getSession()
+        if (cancelled) return
+        if (sessionData.session) {
+          setState({ status: 'signed-in', userId: sessionData.session.user.id })
+          return
+        }
 
-      const { data, error } = await client.auth.signInAnonymously()
-      if (cancelled) return
-      if (error || !data.user) {
-        setState({ status: 'error', message: error?.message ?? '匿名認証に失敗しました' })
-        return
+        const { data, error } = await client.auth.signInAnonymously()
+        if (cancelled) return
+        if (error || !data.user) {
+          setState({ status: 'error', message: error?.message ?? '匿名認証に失敗しました' })
+          return
+        }
+        setState({ status: 'signed-in', userId: data.user.id })
+      } catch (error) {
+        if (cancelled) return
+        const message = error instanceof Error ? error.message : '匿名認証に失敗しました'
+        setState({ status: 'error', message })
       }
-      setState({ status: 'signed-in', userId: data.user.id })
     }
 
     void signIn()

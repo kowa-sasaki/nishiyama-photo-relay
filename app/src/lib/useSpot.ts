@@ -18,24 +18,30 @@ export function useSpot(client: SupabaseClient, spotId: string | null): SpotDeta
     let cancelled = false
 
     async function load(id: string) {
-      const [spotResult, postsResult] = await Promise.all([
-        client.from('spots').select('*').eq('id', id).single(),
-        client.from('posts').select('*').eq('spot_id', id).eq('is_hidden', false).order('created_at', { ascending: false }),
-      ])
-      if (cancelled) return
-      if (spotResult.error) {
-        setState({ status: 'error', message: spotResult.error.message })
-        return
+      try {
+        const [spotResult, postsResult] = await Promise.all([
+          client.from('spots').select('*').eq('id', id).single(),
+          client.from('posts').select('*').eq('spot_id', id).eq('is_hidden', false).order('created_at', { ascending: false }),
+        ])
+        if (cancelled) return
+        if (spotResult.error) {
+          setState({ status: 'error', message: spotResult.error.message })
+          return
+        }
+        if (postsResult.error) {
+          setState({ status: 'error', message: postsResult.error.message })
+          return
+        }
+        setState({
+          status: 'loaded',
+          spot: spotResult.data as Spot,
+          posts: (postsResult.data ?? []) as Post[],
+        })
+      } catch (error) {
+        if (cancelled) return
+        const message = error instanceof Error ? error.message : '定点の取得に失敗しました'
+        setState({ status: 'error', message })
       }
-      if (postsResult.error) {
-        setState({ status: 'error', message: postsResult.error.message })
-        return
-      }
-      setState({
-        status: 'loaded',
-        spot: spotResult.data as Spot,
-        posts: (postsResult.data ?? []) as Post[],
-      })
     }
 
     void load(spotId)

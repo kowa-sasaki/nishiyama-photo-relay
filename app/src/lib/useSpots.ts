@@ -14,20 +14,26 @@ export function useSpots(client: SupabaseClient): SpotsState {
     let cancelled = false
 
     async function load() {
-      const { data, error } = await client
-        .from('spots')
-        .select('*')
-        .eq('is_hidden', false)
-        .order('kind', { ascending: true })
-        .order('order', { ascending: true, nullsFirst: false })
-        .order('created_at', { ascending: false })
+      try {
+        const { data, error } = await client
+          .from('spots')
+          .select('*')
+          .eq('is_hidden', false)
+          .order('kind', { ascending: true })
+          .order('order', { ascending: true, nullsFirst: false })
+          .order('created_at', { ascending: false })
 
-      if (cancelled) return
-      if (error) {
-        setState({ status: 'error', message: error.message })
-        return
+        if (cancelled) return
+        if (error) {
+          setState({ status: 'error', message: error.message })
+          return
+        }
+        setState({ status: 'loaded', spots: (data ?? []) as Spot[] })
+      } catch (error) {
+        if (cancelled) return
+        const message = error instanceof Error ? error.message : '定点の取得に失敗しました'
+        setState({ status: 'error', message })
       }
-      setState({ status: 'loaded', spots: (data ?? []) as Spot[] })
     }
 
     void load()

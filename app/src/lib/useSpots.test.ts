@@ -48,4 +48,26 @@ describe('useSpots', () => {
     await waitFor(() => expect(result.current.status).toBe('error'))
     expect(result.current).toEqual({ status: 'error', message: 'network error' })
   })
+
+  it('returns an error state when the request throws', async () => {
+    const client = {
+      from: vi.fn(() => {
+        throw new Error('Failed to fetch')
+      }),
+    } as unknown as SupabaseClient
+    const { result } = renderHook(() => useSpots(client))
+    await waitFor(() => expect(result.current.status).toBe('error'))
+    expect(result.current).toEqual({ status: 'error', message: 'Failed to fetch' })
+  })
+
+  it('falls back to a Japanese message when a non-Error is thrown', async () => {
+    const client = {
+      from: vi.fn(() => {
+        throw 'boom'
+      }),
+    } as unknown as SupabaseClient
+    const { result } = renderHook(() => useSpots(client))
+    await waitFor(() => expect(result.current.status).toBe('error'))
+    expect(result.current).toEqual({ status: 'error', message: '定点の取得に失敗しました' })
+  })
 })

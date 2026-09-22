@@ -52,6 +52,24 @@ describe('useAnonAuth', () => {
     expect(result.current).toEqual({ status: 'error', message: 'network error' })
   })
 
+  it('returns an error state when the request throws', async () => {
+    const client = createMockClient({
+      signInAnonymously: vi.fn().mockRejectedValue(new Error('Failed to fetch')),
+    })
+    const { result } = renderHook(() => useAnonAuth(client))
+    await waitFor(() => expect(result.current.status).toBe('error'))
+    expect(result.current).toEqual({ status: 'error', message: 'Failed to fetch' })
+  })
+
+  it('falls back to a Japanese message when a non-Error is thrown', async () => {
+    const client = createMockClient({
+      getSession: vi.fn().mockRejectedValue('boom'),
+    })
+    const { result } = renderHook(() => useAnonAuth(client))
+    await waitFor(() => expect(result.current.status).toBe('error'))
+    expect(result.current).toEqual({ status: 'error', message: '匿名認証に失敗しました' })
+  })
+
   it('does not call signInAnonymously if unmounted before getSession resolves', async () => {
     let resolveGetSession!: (value: { data: { session: null } }) => void
     const getSession = vi.fn(
