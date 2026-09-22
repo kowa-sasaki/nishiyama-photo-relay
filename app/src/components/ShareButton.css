@@ -17,7 +17,7 @@
 
 /* absolute配置でトースト的に浮き出させ、共有ボタンの高さ変化が
    隣接要素(投稿するボタン等)の位置をずらさないようにする */
-.share-button__copied {
+.share-button__message {
   position: absolute;
   top: 100%;
   left: 50%;
@@ -30,4 +30,9 @@
   color: var(--text-muted);
   font-size: 0.875rem;
   white-space: nowrap;
+}
+
+.share-button__message--failed {
+  background: var(--status-warn-bg);
+  color: var(--status-warn-text);
 }
