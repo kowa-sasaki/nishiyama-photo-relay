@@ -7,6 +7,7 @@ import { SpotDetailPage } from './pages/SpotDetailPage'
 import { NewSpotPage } from './pages/NewSpotPage'
 import { PostFlowPage } from './pages/PostFlowPage'
 import { SharePage } from './pages/SharePage'
+import { TagPostsPage } from './pages/TagPostsPage'
 
 // @vite-ignoreでRollupの静的解析対象から外す。開発用の一時参照ページ
 // (app/src/assets/の未コミット画像を読み込む)を本番ビルドの依存グラフに
@@ -25,6 +26,7 @@ function App() {
           <Route path="/spots/:spotId" element={<SpotDetailPage />} />
           <Route path="/post" element={<PostFlowPage />} />
           <Route path="/share" element={<SharePage />} />
+          <Route path="/tags/:tag" element={<TagPostsPage />} />
           {import.meta.env.DEV && (
             <Route
               path="/dev/map-trace"

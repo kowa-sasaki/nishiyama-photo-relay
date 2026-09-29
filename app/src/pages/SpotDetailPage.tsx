@@ -11,6 +11,7 @@ import { ReportButton } from '../components/ReportButton'
 import { SpotHeroSlideshow } from '../components/SpotHeroSlideshow'
 import { PostLightbox } from '../components/PostLightbox'
 import { SHARE_HASHTAG } from '../lib/shareText'
+import { tagPath } from '../lib/tags'
 import './SpotDetailPage.css'
 
 export function SpotDetailPage() {
@@ -111,10 +112,12 @@ export function SpotDetailPage() {
                   <div className="spot-detail__post-body">
                     {post.comment && <p>{post.comment}</p>}
                     {post.tags.length > 0 && (
-                      <ul className="spot-detail__post-tags">
+                      <ul className="spot-detail__post-tags" aria-label="タグ">
                         {post.tags.map((tag) => (
-                          <li key={tag} className="spot-detail__tag">
-                            {tag}
+                          <li key={tag}>
+                            <Link to={tagPath(tag)} className="tag-chip">
+                              {tag}
+                            </Link>
                           </li>
                         ))}
                       </ul>

@@ -96,7 +96,10 @@ describe('SpotDetailPage', () => {
     const thumbImage = screen.getByRole('img', { name: '投稿画像' })
     const postRow = thumbImage.closest('li') as HTMLElement
     expect(within(postRow).getByText('きれいでした')).toBeInTheDocument()
-    expect(within(postRow).getByText('桜')).toBeInTheDocument()
+    expect(within(postRow).getByRole('link', { name: '桜' })).toHaveAttribute(
+      'href',
+      `/tags/${encodeURIComponent('桜')}`,
+    )
     expect(thumbImage).toHaveAttribute(
       'src',
       'https://example.supabase.co/storage/v1/object/public/posts/spot-1/a.jpg',
