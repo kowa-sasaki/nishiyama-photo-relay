@@ -97,14 +97,6 @@
   padding: 0;
 }
 
-.spot-detail__tag {
-  background: var(--bg);
-  color: var(--text-muted);
-  border: 1px solid var(--ribbon-snow);
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-size: 0.75rem;
-}
 
 .spot-detail__empty {
   color: var(--text-muted);

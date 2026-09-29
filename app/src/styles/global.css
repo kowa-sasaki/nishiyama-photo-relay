@@ -27,3 +27,23 @@ textarea {
   background: var(--surface);
   color: var(--text);
 }
+
+/* 投稿に付いたタグ。押すとそのタグの写真一覧へ移動する */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  background: var(--bg);
+  color: var(--text-muted);
+  border: 1px solid var(--ribbon-snow);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.tag-chip[aria-current='page'] {
+  color: var(--accent);
+  border-color: var(--accent);
+}

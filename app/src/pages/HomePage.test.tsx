@@ -115,6 +115,40 @@ describe('HomePage', () => {
     expect(rankingList.getByRole('link', { name: /つつじ園/ })).toHaveAttribute('href', '/spots/spot-2')
   })
 
+  it('shows the in-season tags from the last 7 days, linking to the tag photo list', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-08-19T00:00:00Z'))
+    vi.spyOn(useAllPostsModule, 'useAllPosts').mockReturnValue({
+      status: 'loaded',
+      posts: [
+        { ...posts[0], tags: ['花', '静か'] },
+        { ...posts[1], tags: ['花'] },
+      ],
+    })
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    )
+    expect(screen.getByRole('heading', { name: 'いま見頃' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: '花 大噴水前 直近7日の投稿1件' })).toHaveAttribute(
+      'href',
+      `/tags/${encodeURIComponent('花')}`,
+    )
+    expect(screen.queryByRole('link', { name: /^静か/ })).not.toBeInTheDocument()
+  })
+
+  it('hides the in-season section when no recent post has a season tag', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-08-19T00:00:00Z'))
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>,
+    )
+    expect(screen.queryByRole('heading', { name: 'いま見頃' })).not.toBeInTheDocument()
+  })
+
   it('shows a ranking of spots with a long-running succession chain', () => {
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-08-19T00:00:00Z'))
