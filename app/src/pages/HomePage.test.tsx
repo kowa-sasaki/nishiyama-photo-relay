@@ -131,7 +131,7 @@ describe('HomePage', () => {
       </MemoryRouter>,
     )
     expect(screen.getByRole('heading', { name: 'いま見頃' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: '花 1件 大噴水前' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: '花 大噴水前 直近7日の投稿1件' })).toHaveAttribute(
       'href',
       `/tags/${encodeURIComponent('花')}`,
     )

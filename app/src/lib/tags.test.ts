@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildInSeason, filterPostsByTag, normalizeTag, tagPath } from './tags'
+import { findInSeason, filterPostsByTag, normalizeTag, tagPath } from './tags'
 import type { PostWithSpot } from './types'
 
 function post(overrides: Partial<PostWithSpot>): PostWithSpot {
@@ -45,29 +45,31 @@ describe('filterPostsByTag', () => {
   })
 })
 
-describe('buildInSeason', () => {
+describe('findInSeason', () => {
   it('counts only season tags posted within the last 7 days', () => {
     const posts = [
       post({ id: 'a', tags: ['紅葉', '混雑'], created_at: '2026-11-11T00:00:00Z' }),
       post({ id: 'b', tags: ['紅葉'], created_at: '2026-11-01T00:00:00Z' }),
       post({ id: 'c', tags: ['静か'], created_at: '2026-11-11T00:00:00Z' }),
     ]
-    expect(buildInSeason(posts, now)).toEqual([
-      { tag: '紅葉', count: 1, spotNames: ['上段の庭（もみじ）'], latestImagePath: 'spot-1/p.jpg' },
-    ])
+    expect(findInSeason(posts, now)).toEqual({
+      tag: '紅葉',
+      count: 1,
+      spotNames: ['上段の庭（もみじ）'],
+      latestImagePath: 'spot-1/p.jpg',
+    })
   })
 
   it('returns nothing when there are no recent season posts', () => {
-    expect(buildInSeason([post({ tags: ['静か'] })], now)).toEqual([])
-    expect(buildInSeason([post({ tags: ['紅葉'], created_at: '2025-11-10T00:00:00Z' })], now)).toEqual([])
+    expect(findInSeason([post({ tags: ['静か'] })], now)).toBeNull()
+    expect(findInSeason([post({ tags: ['紅葉'], created_at: '2025-11-10T00:00:00Z' })], now)).toBeNull()
   })
 
   it('counts a post once even when it has two spellings of the same tag', () => {
-    const entries = buildInSeason([post({ tags: ['紅葉', 'もみじ'] })], now)
-    expect(entries[0].count).toBe(1)
+    expect(findInSeason([post({ tags: ['紅葉', 'もみじ'] })], now)?.count).toBe(1)
   })
 
-  it('sorts tags by count, then by the newest post, and keeps the top 3', () => {
+  it('picks the tag with the most posts, breaking ties by the newest post', () => {
     const posts = [
       post({ id: 'a', tags: ['雪'], created_at: '2026-11-11T00:00:00Z' }),
       post({ id: 'b', tags: ['紅葉'], created_at: '2026-11-08T00:00:00Z' }),
@@ -75,7 +77,8 @@ describe('buildInSeason', () => {
       post({ id: 'd', tags: ['花'], created_at: '2026-11-10T00:00:00Z' }),
       post({ id: 'e', tags: ['新緑'], created_at: '2026-11-07T00:00:00Z' }),
     ]
-    expect(buildInSeason(posts, now).map((e) => e.tag)).toEqual(['紅葉', '雪', '花'])
+    expect(findInSeason(posts, now)?.tag).toBe('紅葉')
+    expect(findInSeason(posts.filter((p) => p.id !== 'b'), now)?.tag).toBe('雪')
   })
 
   it('lists spots with the most posts first and uses the newest image', () => {
@@ -84,7 +87,7 @@ describe('buildInSeason', () => {
       post({ id: 'b', tags: ['紅葉'], spot_id: 's2', spots: { name: '上段の庭' }, image_path: 's2/b.jpg', created_at: '2026-11-09T00:00:00Z' }),
       post({ id: 'c', tags: ['紅葉'], spot_id: 's2', spots: { name: '上段の庭' }, image_path: 's2/c.jpg', created_at: '2026-11-10T00:00:00Z' }),
     ]
-    const [entry] = buildInSeason(posts, now)
+    const entry = findInSeason(posts, now)!
     expect(entry.count).toBe(3)
     expect(entry.spotNames).toEqual(['上段の庭', '大噴水前'])
     expect(entry.latestImagePath).toBe('s1/a.jpg')

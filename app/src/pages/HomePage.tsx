@@ -6,7 +6,7 @@ import { useVisitorsDaily } from '../lib/useVisitorsDaily'
 import { buildParkTimeline, timelineMonthDay } from '../lib/parkTimeline'
 import { buildSpotRanking } from '../lib/spotRanking'
 import { buildSuccessionDaysRanking } from '../lib/successionDays'
-import { buildInSeason } from '../lib/tags'
+import { findInSeason } from '../lib/tags'
 import { HeroSlideshow } from '../components/HeroSlideshow'
 import { InSeason } from '../components/InSeason'
 import { ParkTimeline } from '../components/ParkTimeline'
@@ -33,7 +33,7 @@ export function HomePage() {
     [postsState],
   )
   const inSeason = useMemo(
-    () => (postsState.status === 'loaded' ? buildInSeason(postsState.posts, new Date()) : []),
+    () => (postsState.status === 'loaded' ? findInSeason(postsState.posts, new Date()) : null),
     [postsState],
   )
   const successionRanking = useMemo(
@@ -83,7 +83,7 @@ export function HomePage() {
         <span className="home-page__title-brand">西山公園フォトリレー</span>
       </h1>
       <HeroSlideshow client={client} recentPosts={postsState.posts} selectedDay={selectedDay} />
-      <InSeason client={client} entries={inSeason} />
+      <InSeason client={client} entry={inSeason} />
       <ParkTimeline
         days={days}
         selectedMonthDay={selectedMonthDay}

@@ -19,7 +19,6 @@ const TAG_ALIASES: Record<string, string> = {
 }
 
 const DEFAULT_WINDOW_DAYS = 7
-const DEFAULT_TOP_N = 3
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 
 export function normalizeTag(tag: string): string {
@@ -55,13 +54,13 @@ type TagStats = {
   spots: Map<string, { name: string; count: number; latestPostAt: string }>
 }
 
-export function buildInSeason(
+// 季節の見頃は重ならないので、直近で最も多く付いた季節のタグを1つだけ返す
+export function findInSeason(
   posts: PostWithSpot[],
   now: Date,
-  options?: { windowDays?: number; topN?: number },
-): InSeasonEntry[] {
+  options?: { windowDays?: number },
+): InSeasonEntry | null {
   const windowDays = options?.windowDays ?? DEFAULT_WINDOW_DAYS
-  const topN = options?.topN ?? DEFAULT_TOP_N
   const cutoff = now.getTime() - windowDays * MS_PER_DAY
   const seasonTags = new Set<string>(SEASON_TAGS)
   const byTag = new Map<string, TagStats>()
@@ -97,15 +96,18 @@ export function buildInSeason(
     }
   }
 
-  return Array.from(byTag.entries())
-    .sort(([, a], [, b]) => b.count - a.count || b.latestPostAt.localeCompare(a.latestPostAt))
-    .slice(0, topN)
-    .map(([tag, stats]) => ({
-      tag,
-      count: stats.count,
-      spotNames: Array.from(stats.spots.values())
-        .sort((a, b) => b.count - a.count || b.latestPostAt.localeCompare(a.latestPostAt))
-        .map((spot) => spot.name),
-      latestImagePath: stats.latestImagePath,
-    }))
+  const top = Array.from(byTag.entries()).sort(
+    ([, a], [, b]) => b.count - a.count || b.latestPostAt.localeCompare(a.latestPostAt),
+  )[0]
+  if (!top) return null
+
+  const [tag, stats] = top
+  return {
+    tag,
+    count: stats.count,
+    spotNames: Array.from(stats.spots.values())
+      .sort((a, b) => b.count - a.count || b.latestPostAt.localeCompare(a.latestPostAt))
+      .map((spot) => spot.name),
+    latestImagePath: stats.latestImagePath,
+  }
 }

@@ -11,30 +11,27 @@ beforeEach(() => {
 })
 
 describe('InSeason', () => {
-  it('renders nothing when there are no entries', () => {
+  it('renders nothing when nothing is in season', () => {
     const { container } = render(
       <MemoryRouter>
-        <InSeason client={client} entries={[]} />
+        <InSeason client={client} entry={null} />
       </MemoryRouter>,
     )
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('links each tag to its photo list and summarizes the spots', () => {
+  it('links the tag to its photo list and summarizes the spots', () => {
     render(
       <MemoryRouter>
         <InSeason
           client={client}
-          entries={[
-            { tag: '紅葉', count: 5, spotNames: ['上段の庭（もみじ）', '大噴水前', '愛の鐘・展望台'], latestImagePath: 'a.jpg' },
-            { tag: '花', count: 1, spotNames: ['大噴水前'], latestImagePath: 'b.jpg' },
-          ]}
+          entry={{ tag: '紅葉', count: 5, spotNames: ['上段の庭（もみじ）', '大噴水前', '愛の鐘・展望台'], latestImagePath: 'a.jpg' }}
         />
       </MemoryRouter>,
     )
     expect(screen.getByRole('heading', { name: 'いま見頃' })).toBeInTheDocument()
-    const koyo = screen.getByRole('link', { name: '紅葉 5件 上段の庭（もみじ）ほか2か所' })
-    expect(koyo).toHaveAttribute('href', `/tags/${encodeURIComponent('紅葉')}`)
-    expect(screen.getByRole('link', { name: '花 1件 大噴水前' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: '紅葉 上段の庭（もみじ）ほか2か所 直近7日の投稿5件' }),
+    ).toHaveAttribute('href', `/tags/${encodeURIComponent('紅葉')}`)
   })
 })
